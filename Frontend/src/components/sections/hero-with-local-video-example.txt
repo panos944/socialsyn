@@ -1,0 +1,55 @@
+// To replace the hero video with your own, update the Hero.tsx file like this:
+
+import { useRef } from 'react';
+import ReactPlayer from 'react-player';
+import { motion } from 'framer-motion';
+
+// Import your local video
+import backgroundVideo from '@/assets/videos/your-video-file.mp4';
+
+export default function Hero() {
+  const videoRef = useRef<HTMLDivElement>(null);
+
+  // Function to scroll to a section
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    const section = document.querySelector(sectionId);
+    if (section) {
+      window.scrollTo({
+        top: section.getBoundingClientRect().top + window.scrollY - 80,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  return (
+    <section id="home" className="video-container">
+      <div className="video-overlay"></div>
+      
+      <div className="absolute inset-0 w-full h-full z-[-1]">
+        <ReactPlayer
+          url={backgroundVideo}  // Using local video file
+          playing
+          loop
+          muted
+          width="100%"
+          height="100%"
+          style={{ objectFit: 'cover' }}
+          config={{
+            file: {
+              attributes: {
+                style: {
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                }
+              }
+            }
+          }}
+        />
+      </div>
+      
+      {/* Rest of the component remains the same */}
+    </section>
+  );
+}
