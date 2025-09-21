@@ -1,12 +1,5 @@
 {
-  "version": 2,
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/Frontend/$1"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  "buildCommand": "cd Frontend && npm run build",
+  "outputDirectory": "Frontend/.next",
+  "installCommand": "cd Frontend && npm install"
 }
