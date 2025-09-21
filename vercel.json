@@ -8,10 +8,5 @@
   ],
   "env": {
     "NODE_ENV": "production"
-  },
-  "functions": {
-    "Frontend/src/app/api/**/*.ts": {
-      "maxDuration": 30
-    }
   }
 }
