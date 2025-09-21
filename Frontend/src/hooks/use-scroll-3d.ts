@@ -51,13 +51,9 @@ export function useScroll3D(containerRef: RefObject<HTMLElement | null>) {
   }, [scrollYProgress, scrollProgress])
   
   // Transform scroll progress for different animation curves
-  const easeProgress = useTransform(scrollProgress, [0, 1], [0, 1], {
-    ease: [0.25, 0.46, 0.45, 0.94] // Custom easing curve
-  })
+  const easeProgress = useTransform(scrollProgress, [0, 1], [0, 1])
   
-  const bounceProgress = useTransform(scrollProgress, [0, 1], [0, 1], {
-    ease: [0.68, -0.55, 0.265, 1.55] // Bounce easing
-  })
+  const bounceProgress = useTransform(scrollProgress, [0, 1], [0, 1])
   
   return {
     scrollProgress: scrollProgress.get(),

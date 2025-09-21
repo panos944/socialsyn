@@ -55,7 +55,7 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({
       <Carousel
         ref={carouselRef}
         className="w-full"
-        onSelect={(_event: React.SyntheticEvent<HTMLDivElement, Event>) => setActive(0)}
+        onSelect={() => setActive(0)}
       >
         <CarouselContent>
           {React.Children.map(children, (child, i) => (
