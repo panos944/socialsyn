@@ -1,20 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
+import { ResponsiveImage } from '@/components/common/ResponsiveImage'
 
-// Portfolio of best client photos with metadata
+// Portfolio of best client photos with metadata - using optimized images
 const photos = [
-  { url: '/images/images/LUISANT/IMG_8065.JPG', client: 'LUISANT', title: 'Jewelry Photography' },
-  { url: '/images/images/LUISANT/IMG_8109.JPG', client: 'LUISANT', title: 'Product Showcase' },
-  { url: '/images/images/DOMAINE HATZIMICHALIS/IMG_2139.JPG', client: 'DOMAINE HATZIMICHALIS', title: 'Winery Campaign' },
-  { url: '/images/images/ITALOS/IMG_2931.JPG', client: 'ITALOS', title: 'Brand Photography' },
-  { url: '/images/images/JCou/IMG_5497.JPG', client: 'JCOU', title: 'Fashion Editorial' },
-  { url: '/images/images/LEDOM/IMG_2939.JPG', client: 'LEDOM', title: 'Lifestyle Shoot' },
-  { url: '/images/images/ZALO/IMG_1793.JPG', client: 'ZALO', title: 'Product Photography' },
-  { url: '/images/images/PHOTIS/IMG_0788.JPG', client: 'PHOTIS', title: 'Portrait Session' },
-  { url: '/images/images/ITALOS/IMG_7787.JPG', client: 'ITALOS', title: 'Commercial Work' },
-  { url: '/images/images/LUISANT/IMG_8203.JPG', client: 'LUISANT', title: 'Luxury Products' }
+  { basePath: '/optimized/img_8065', client: 'LUISANT', title: 'Jewelry Photography' },
+  { basePath: '/optimized/img_8203', client: 'LUISANT', title: 'Product Showcase' },
+  { basePath: '/optimized/mindset-feed-september-2021', client: 'GRAPHICS', title: 'Brand Campaign' },
+  { basePath: '/optimized/img_7836-2', client: 'ITALOS', title: 'Brand Photography' },
+  { basePath: '/optimized/img_9439-5', client: 'JCOU', title: 'Fashion Editorial' },
+  { basePath: '/optimized/img_9419-3', client: 'LEDOM', title: 'Lifestyle Shoot' },
+  { basePath: '/optimized/image00039', client: 'LEDOM', title: 'Product Photography' },
+  { basePath: '/optimized/untitled-xsxs3', client: 'EDITORIAL', title: 'Portrait Session' },
+  { basePath: '/optimized/costarellos-feed', client: 'COSTARELLOS', title: 'Commercial Work' },
+  { basePath: '/optimized/bridal-feed', client: 'BRIDAL', title: 'Luxury Products' }
 ]
 
 export function SimplePhotographySection() {
@@ -97,8 +97,8 @@ export function SimplePhotographySection() {
           <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
             {/* Current Photo */}
             <div className={`absolute inset-0 transition-opacity duration-700 ease-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-              <Image
-                src={currentPhoto.url}
+              <ResponsiveImage
+                basePath={currentPhoto.basePath}
                 alt={currentPhoto.title}
                 fill
                 className="object-cover"
@@ -167,8 +167,8 @@ export function SimplePhotographySection() {
                   : 'opacity-60 hover:opacity-100 hover:scale-102'
               }`}
             >
-              <Image
-                src={photo.url}
+              <ResponsiveImage
+                basePath={photo.basePath}
                 alt={photo.title}
                 fill
                 className="object-cover"

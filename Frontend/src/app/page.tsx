@@ -5,28 +5,25 @@ import { motion, useScroll } from 'framer-motion';
 import { useScrollToTop } from '@/hooks/use-scroll';
 import { ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
 import Services from '@/components/sections/Services';
 import About from '@/components/sections/About';
 import Portfolio from '@/components/sections/Portfolio';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import NoSSR from '@/components/common/NoSSR';
-import { SimplePhotographySection } from '@/components/three/SimplePhotographySection';
+import CTA from '@/components/sections/CTA';
+import Contact from '@/components/sections/Contact';
 import { Feed } from '@/components/sections/Feed';
+import { SimplePhotographySection } from '@/components/three/SimplePhotographySection';
 
 export default function Home() {
   const scrollToTop = useScrollToTop();
   const { scrollYProgress } = useScroll();
   const [isVisible, setIsVisible] = useState(false);
 
-  // Update document title
   useEffect(() => {
     document.title = 'Socialsyn - Digital Marketing Agency';
-  }, []);
-
-  // Handle scroll visibility with useEffect to prevent hydration mismatch
-  useEffect(() => {
+    
     const unsubscribe = scrollYProgress.on('change', (latest) => {
       setIsVisible(latest > 0.2);
     });
@@ -34,36 +31,28 @@ export default function Home() {
     return () => unsubscribe();
   }, [scrollYProgress]);
 
-
   return (
     <>
       <Header />
       <main className="overflow-x-hidden relative">
-        {/* Provide scroll height for 3D scene - each section gets proper spacing */}
         <div className="relative z-10">
-          {/* Section 1: Hero + Services */}
-          <div className="section-1 min-h-screen bg-white relative z-20">
+          {/* Hero & Services */}
+          <section className="min-h-screen bg-white relative z-20">
             <Hero />
             <Services />
-          </div>
+          </section>
 
-                    
-          {/* Feed Section - Social Content Display */}
-          <NoSSR>
-            <Feed />
-          </NoSSR>
+          {/* Feed Section */}
+          <Feed />
 
-          {/* Section 2: About */}
-          <div className="section-2 min-h-screen bg-white relative z-20">
+          {/* About Section */}
+          <section className="min-h-screen bg-white relative z-20">
             <About />
-          </div>
+          </section>
           
-          {/* Photography Section - Simple 3D Display */}
-          <NoSSR>
-            <SimplePhotographySection />
-          </NoSSR>
+          {/* Photography Section */}
+          <SimplePhotographySection />
           
-        
           {/* Elegant Separator */}
           <div className="relative py-16 z-20">
             <div className="w-full px-4">
@@ -75,16 +64,18 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Section 3: Portfolio */}
-          <div className="section-3 min-h-screen bg-white relative z-20">
+          {/* Portfolio Section */}
+          <section className="min-h-screen bg-white relative z-20">
             <Portfolio />
-            {/* <Testimonials /> */}
-          </div>
+          </section>
           
-          {/* Section 4: CTA */}
-          {/* <div className="section-4 bg-white relative z-20">
+          {/* CTA Section */}
+          <section className="bg-white relative z-20">
             <CTA />
-          </div> */}
+          </section>
+
+          {/* Contact Section */}
+          <Contact />
           
         </div>
         

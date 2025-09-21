@@ -32,7 +32,7 @@ export default function Hero() {
         style={{ y }}
       >
         <video
-          src="/07DF5552-C205-4643-BC59-E53B88DE6357.mov"
+          src="/video-output-A9EE466B-1480-4124-A38A-8214C88EFD40-2.mov"
           autoPlay
           loop
           muted

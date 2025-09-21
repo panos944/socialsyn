@@ -2,6 +2,10 @@
 node_modules/
 */node_modules/
 
+# Images - ignore original JPG files (optimized WebP versions are used)
+*.jpg
+*.JPG
+
 # Environment variables
 .env
 .env.local
@@ -95,3 +99,5 @@ yarn.lock
 
 #Claude
 .CLAUDE.md
+
+.node_modules

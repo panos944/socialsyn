@@ -3,20 +3,20 @@
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 
-// Feed images - full feeds from root public folder
+// Feed images - optimized versions from /optimized folder
 const feedImages = [
   {
-    url: '/costarellos feed.jpg',
+    url: '/optimized/costarellos-feed',
     title: 'Costarellos Feed',
     description: 'Social Media Feed'
   },
   {
-    url: '/Riza-feed.jpg',
+    url: '/optimized/riza-feed',
     title: 'Riza Feed',
     description: 'Social Media Feed'
   },
   {
-    url: '/BRIDAL FEED.jpg',
+    url: '/optimized/bridal-feed',
     title: 'Bridal Feed',
     description: 'Social Media Feed'
   }
@@ -107,7 +107,7 @@ export function Feed() {
           }`}>
             <div className="w-48 aspect-[3/4] rounded-lg overflow-hidden shadow-lg">
               <Image
-                src={prevFeedImage.url}
+                src={`${prevFeedImage.url}-600.webp`}
                 alt={prevFeedImage.title}
                 width={200}
                 height={267}
@@ -123,7 +123,7 @@ export function Feed() {
           }`}>
             <div className="w-48 aspect-[3/4] rounded-lg overflow-hidden shadow-lg">
               <Image
-                src={nextFeedImage.url}
+                src={`${nextFeedImage.url}-600.webp`}
                 alt={nextFeedImage.title}
                 width={200}
                 height={267}
@@ -204,12 +204,12 @@ export function Feed() {
               }}
             >
               <Image
-                src={currentFeed.url}
+                src={`${currentFeed.url}-1200.webp`}
                 alt={currentFeed.title}
                 width={400}
                 height={2000}
                 className="w-full h-auto object-contain"
-                sizes="(max-width: 1000px) 100vw, (max-width: 1500px) 80vw, 70vw"
+                sizes="(max-width: 768px) 300px, (max-width: 1024px) 600px, 1200px"
                 priority
                 quality={90}
               />

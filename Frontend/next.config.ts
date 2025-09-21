@@ -20,14 +20,6 @@ const nextConfig: NextConfig = {
   // Optimize for Vercel deployment
   output: 'standalone',
   serverExternalPackages: ['sharp'],
-  // Handle Three.js and other large dependencies
-  webpack: (config) => {
-    config.externals.push({
-      'utf-8-validate': 'commonjs utf-8-validate',
-      'bufferutil': 'commonjs bufferutil',
-    });
-    return config;
-  },
 };
 
 export default nextConfig;
