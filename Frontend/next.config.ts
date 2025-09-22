@@ -17,8 +17,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Optimize for Vercel deployment
-  output: 'standalone',
+  // Removed output: 'standalone' - this was causing 404 errors on Vercel
   serverExternalPackages: ['sharp'],
 };
 
