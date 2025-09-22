@@ -34,4 +34,4 @@ Copy `.env.example` to `.env` in each directory and configure your variables.
 - TypeScript
 - Tailwind CSS
 - Express.js
-- MongoDB
+- MongoDB# Trigger deployment
