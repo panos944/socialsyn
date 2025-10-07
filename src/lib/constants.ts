@@ -12,6 +12,8 @@ export const services = [
     title: "Social Media",
     description: "Expert management of your social platforms to build community, engagement, and brand loyalty.",
     image: "/optimized/costarellos-feed-600.webp",
+    instagramGrid: true,
+    feedImage: "/optimized/costarellos-feed-600.webp",
     features: ["Content Creation", "Community Management", "Performance Analytics"],
   },
   {

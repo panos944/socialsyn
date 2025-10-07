@@ -1,10 +1,7 @@
-import { Router, Request, Response } from 'express';
-import { PortfolioItem, ApiResponse, ErrorResponse } from '../types';
+import { PortfolioItem } from '@/types/api';
 
-const router = Router();
-
-// Mock portfolio data (replace with database queries)
-const portfolioData: Record<string, PortfolioItem[]> = {
+// Portfolio data organized by category
+export const portfolioData: Record<string, PortfolioItem[]> = {
   'digital-marketing': [
     {
       id: 1,
@@ -55,55 +52,11 @@ const portfolioData: Record<string, PortfolioItem[]> = {
   ]
 };
 
-// Get portfolio by category
-router.get('/:category', (req: Request, res: Response): void => {
-  try {
-    const { category } = req.params;
-    
-    const items = portfolioData[category];
-    
-    if (!items) {
-      res.status(404).json({
-        success: false,
-        message: 'Portfolio category not found'
-      } as ErrorResponse);
-      return;
-    }
+export const getAllPortfolioItems = (): PortfolioItem[] => {
+  return Object.values(portfolioData).flat();
+};
 
-    res.json({
-      success: true,
-      message: `Portfolio items for ${category}`,
-      data: {
-        category,
-        items
-      }
-    } as ApiResponse);
-  } catch (error) {
-    console.error('Portfolio category error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch portfolio items'
-    } as ErrorResponse);
-  }
-});
+export const getPortfolioByCategory = (category: string): PortfolioItem[] | null => {
+  return portfolioData[category] || null;
+};
 
-// Get all portfolio items
-router.get('/', (req: Request, res: Response): void => {
-  try {
-    const allItems = Object.values(portfolioData).flat();
-    
-    res.json({
-      success: true,
-      message: 'All portfolio items',
-      data: allItems
-    } as ApiResponse);
-  } catch (error) {
-    console.error('Portfolio error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch portfolio items'
-    } as ErrorResponse);
-  }
-});
-
-export default router;

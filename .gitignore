@@ -99,5 +99,3 @@ yarn.lock
 
 #Claude
 .CLAUDE.md
-
-.node_modules
