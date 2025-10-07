@@ -32,17 +32,20 @@ export default function Hero() {
         style={{ y }}
       >
         <video
-          src="/video-output-A9EE466B-1480-4124-A38A-8214C88EFD40-2.mov"
           autoPlay
           loop
           muted
           playsInline
+          preload="auto"
           style={{
             width: '100%',
             height: '110%',
             objectFit: 'cover',
           }}
-        />
+        >
+          <source src="/hero-video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </motion.div>
       
       <div className="hero-content flex items-center justify-center h-full">
