@@ -23,12 +23,14 @@ export default function Hero() {
     const onDone = () => setLoaderDone(true);
     if (typeof window !== 'undefined') {
       window.addEventListener('initial-loader:done', onDone);
-    }
-    return () => {
-      if (typeof window !== 'undefined') {
+      // Fallback: if no loader event (e.g., cached session), enable immediately after a short delay
+      const fallback = window.setTimeout(() => setLoaderDone(true), 500);
+      return () => {
         window.removeEventListener('initial-loader:done', onDone);
-      }
-    };
+        window.clearTimeout(fallback);
+      };
+    }
+    return () => {};
   }, []);
 
   // Intercept scroll to step through the word reveals; block page scroll until CTA is visible
@@ -134,7 +136,8 @@ export default function Hero() {
             WebkitTouchCallout: 'none',
           }}
         >
-          <source src="/video-output-02B0EFCF-7710-41BF-B442-B39610C77A3F-2.mov"/>
+          <source src="/video-output-02B0EFCF-7710-41BF-B442-B39610C77A3F-2.mov" type="video/quicktime" />
+          <source src="/video-output-02B0EFCF-7710-41BF-B442-B39610C77A3F-2.mov" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </motion.div>
@@ -196,12 +199,12 @@ export default function Hero() {
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-12 h-12 border rounded-full flex items-center justify-center mr-4 group-hover:bg-white/10 transition-all duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <div className="w-12 h-12 border-2 border-white rounded-full flex items-center justify-center mr-4 group-hover:bg-white group-hover:text-black transition-all duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="m9 18 6-6-6-6"/>
                   </svg>
                 </div>
-                <span className="text-sm uppercase tracking-wider">Start a Project</span>
+                <span className="text-base md:text-lg font-medium uppercase tracking-wider">Start a Project</span>
               </motion.a>
             </motion.div>
           </div>

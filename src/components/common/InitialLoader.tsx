@@ -49,7 +49,7 @@ export default function InitialLoader({ force = false }: InitialLoaderProps) {
     // Show discrete branded steps rather than a continuous counter
     // Ensure we always traverse all steps, and extend timing slightly
     const steps = [0, 24, 48, 72, 100]
-    const stepDelay = 1200 // ms per step (total ~6s)
+    const stepDelay = 800 // ms per step (total ~3.2s)
     const timeouts: number[] = []
 
     steps.forEach((value, index) => {
@@ -59,7 +59,7 @@ export default function InitialLoader({ force = false }: InitialLoaderProps) {
           // Notify the app that the loader sequence has completed
           try { window.dispatchEvent(new CustomEvent('initial-loader:done')) } catch {}
           // Hold at 100 a touch less for snappier feel
-          window.setTimeout(() => setVisible(false), 1500)
+          window.setTimeout(() => setVisible(false), 1200)
           if (typeof window !== 'undefined') {
             sessionStorage.setItem('initial-loader-shown', '1')
           }
