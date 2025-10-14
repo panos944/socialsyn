@@ -9,7 +9,6 @@ export default function Hero() {
   const [revealIndex, setRevealIndex] = useState(-1); // -1 means not started
   const [isAnimatingStep, setIsAnimatingStep] = useState(false);
   const words = ['Creative', 'solutions', 'for', 'ambitious', 'brands'];
-  const allWordsRevealed = revealIndex >= words.length - 1;
   const ctaVisible = revealIndex >= words.length - 1; // CTA appears as soon as last word is revealed
   const isBlockingScroll = loaderDone && !ctaVisible; // block until CTA visible
   const ready = loaderDone && revealIndex >= 0; // subtitle shows after first step
@@ -69,11 +68,11 @@ export default function Hero() {
     window.addEventListener('touchmove', onTouchMove, { passive: false });
     window.addEventListener('keydown', onKeyDown);
     return () => {
-      window.removeEventListener('wheel', onWheel as any);
-      window.removeEventListener('touchmove', onTouchMove as any);
-      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('wheel', onWheel as EventListener);
+      window.removeEventListener('touchmove', onTouchMove as EventListener);
+      window.removeEventListener('keydown', onKeyDown as EventListener);
     };
-  }, [loaderDone, isAnimatingStep, ctaVisible]);
+  }, [loaderDone, isAnimatingStep, ctaVisible, words.length]);
 
   // Also lock body scroll while blocking
   useEffect(() => {
