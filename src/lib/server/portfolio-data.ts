@@ -7,7 +7,7 @@ export const portfolioData: Record<string, PortfolioItem[]> = {
       id: 1,
       title: 'PPC Campaign for SaaS Platform',
       description: 'Optimized ad spend resulting in 45% lower cost-per-acquisition and 80% increase in qualified leads.',
-      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c',
+      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       category: 'digital-marketing',
       categoryLabel: 'Digital Marketing'
     },
@@ -15,7 +15,7 @@ export const portfolioData: Record<string, PortfolioItem[]> = {
       id: 5,
       title: 'SEO Strategy for E-commerce',
       description: 'Complete SEO overhaul that improved organic rankings and increased traffic by 200%.',
-      image: '/images/images/LUISANT/IMG_8203.JPG',
+      image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       category: 'digital-marketing',
       categoryLabel: 'Digital Marketing'
     }
@@ -25,7 +25,7 @@ export const portfolioData: Record<string, PortfolioItem[]> = {
       id: 2,
       title: 'Instagram Growth Feed Strategy',
       description: 'Complete social media strategy that increased engagement by 300%.',
-      image: '/images/feeds/Untitled-XSXS3.jpg',
+      image: 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       category: 'social-media',
       categoryLabel: 'Social Media'
     }
@@ -35,7 +35,7 @@ export const portfolioData: Record<string, PortfolioItem[]> = {
       id: 3,
       title: 'Product Photography for E-commerce',
       description: 'Professional product photos that improved conversion rate by 35%.',
-      image: '/images/images/JCou/IMG_9439 5.JPG',
+      image: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       category: 'photography',
       categoryLabel: 'Photography'
     }
@@ -45,7 +45,7 @@ export const portfolioData: Record<string, PortfolioItem[]> = {
       id: 4,
       title: 'Brand Identity for Restaurant Chain',
       description: 'Complete brand redesign including logo, menu design, and restaurant signage.',
-      image: '/images/images/ITALOS/IMG_7836 2.JPG',
+      image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
       category: 'graphic-design',
       categoryLabel: 'Graphic Design'
     }

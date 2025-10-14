@@ -33,7 +33,7 @@ export function ResponsiveImage({
   height,
   className,
   priority = false,
-  quality = 85,
+  quality = 100,
   sizes = defaultSizes,
   fill = false
 }: ResponsiveImageProps) {

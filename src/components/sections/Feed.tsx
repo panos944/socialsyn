@@ -3,21 +3,21 @@
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 
-// Feed images - optimized versions from /optimized folder
+// Feed images - using tall, scrollable images for Instagram-style feed experience
 const feedImages = [
   {
-    url: '/optimized/costarellos-feed',
-    title: 'Costarellos Feed',
+    url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&h=3000&q=80',
+    title: 'Fashion Editorial',
     description: 'Social Media Feed'
   },
   {
-    url: '/optimized/riza-feed',
-    title: 'Riza Feed',
+    url: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&h=3000&q=80',
+    title: 'Lifestyle Collection',
     description: 'Social Media Feed'
   },
   {
-    url: '/optimized/bridal-feed',
-    title: 'Bridal Feed',
+    url: 'https://images.unsplash.com/photo-1558769132-cb1aea9c516c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&h=3000&q=80',
+    title: 'Street Style',
     description: 'Social Media Feed'
   }
 ]
@@ -101,34 +101,34 @@ export function Feed() {
 
         {/* Main Hero Feed with Side Previews */}
         <div className="w-96 mx-auto mb-12 relative group">
-          {/* Left Side Preview - 25% Larger */}
+          {/* Left Side Preview */}
           <div className={`hidden lg:block absolute left-[-230px] top-1/2 -translate-y-1/2 z-5 transition-all duration-300 ${
             isTransitioning ? 'opacity-20' : 'opacity-60'
           }`}>
             <div className="w-48 aspect-[3/4] rounded-lg overflow-hidden shadow-lg">
               <Image
-                src={`${prevFeedImage.url}-600.webp`}
+                src={prevFeedImage.url}
                 alt={prevFeedImage.title}
-                width={200}
-                height={267}
+                width={600}
+                height={800}
                 className="w-full h-full object-cover"
-                quality={75}
+                quality={90}
               />
             </div>
           </div>
 
-          {/* Right Side Preview - 25% Larger */}
+          {/* Right Side Preview */}
           <div className={`hidden lg:block absolute right-[-230px] top-1/2 -translate-y-1/2 z-5 transition-all duration-300 ${
             isTransitioning ? 'opacity-20' : 'opacity-60'
           }`}>
             <div className="w-48 aspect-[3/4] rounded-lg overflow-hidden shadow-lg">
               <Image
-                src={`${nextFeedImage.url}-600.webp`}
+                src={nextFeedImage.url}
                 alt={nextFeedImage.title}
-                width={200}
-                height={267}
+                width={600}
+                height={800}
                 className="w-full h-full object-cover"
-                quality={75}
+                quality={90}
               />
             </div>
           </div>
@@ -191,11 +191,11 @@ export function Feed() {
           {/* Main Hero Feed Container */}
           <div 
             ref={containerRef}
-            className="relative aspect-[4/6] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:shadow-3xl"
+            className="relative aspect-[3/5] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:shadow-3xl"
           >
-            {/* Auto-Scrollable Image - positioned to show full height */}
+            {/* Auto-Scrollable Image - Full width, fits side to side */}
             <div 
-              className={`absolute left-0 right-0 transition-opacity duration-600 ease-in-out ${
+              className={`absolute left-0 right-0 w-full transition-opacity duration-600 ease-in-out ${
                 isTransitioning ? 'opacity-0' : 'opacity-100'
               }`}
               style={{
@@ -204,14 +204,15 @@ export function Feed() {
               }}
             >
               <Image
-                src={`${currentFeed.url}-1200.webp`}
+                src={currentFeed.url}
                 alt={currentFeed.title}
-                width={400}
-                height={2000}
-                className="w-full h-auto object-contain"
-                sizes="(max-width: 768px) 300px, (max-width: 1024px) 600px, 1200px"
+                width={1080}
+                height={2700}
+                className="w-full h-auto"
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 600px, 400px"
                 priority
-                quality={90}
+                quality={95}
+                style={{ objectFit: 'cover', objectPosition: 'center top' }}
               />
             </div>
             

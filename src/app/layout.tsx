@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import InitialLoader from "@/components/common/InitialLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +29,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* SSR fallback overlay to avoid flashing underlying content before client loader mounts */}
+        <div id="ssr-initial-loader" className="fixed inset-0 z-[2000] bg-neutral-950"></div>
         <Providers>
+          {/* Force during development so it doesn't disappear instantly due to session flag */}
+          <InitialLoader force />
           {children}
         </Providers>
       </body>

@@ -30,18 +30,18 @@ export default function Services() {
     <section id="services" className="pt-24 pb-12 bg-secondary/20">
       <div className="container mx-auto px-8 md:px-12">
         <motion.div 
-          className="mb-16 max-w-2xl"
+          className="mb-16 max-w-3xl"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
           variants={itemVariants}
         >
           <div className="section-label">WHAT WE DO</div>
-          <h2 className="serif-heading text-4xl md:text-5xl mb-8">
-            Strategic digital solutions for modern brands
+          <h2 className="serif-heading text-4xl md:text-5xl mb-4">
+            Creative solutions for ambitious brands
           </h2>
           <p className="text-base" style={{ color: 'hsl(var(--neutral-light))' }}>
-            We craft tailored digital strategies that elevate your brand&apos;s presence and drive measurable results in today&apos;s competitive landscape.
+            Elevating brands through strategic digital experiences.
           </p>
         </motion.div>
 

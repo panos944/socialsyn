@@ -45,12 +45,13 @@ const config: OptimizationConfig = {
   sizes: {
     small: { width: 300, height: 300, suffix: '-300' },
     medium: { width: 600, height: 600, suffix: '-600' },
-    large: { width: 1200, height: 1200, suffix: '-1200' }
+    large: { width: 1200, height: 1200, suffix: '-1200' },
+    xlarge: { width: 2400, height: 2400, suffix: '-2400' }
   },
   quality: {
-    webp: 85,
-    jpeg: 85,
-    png: 90
+    webp: 95,
+    jpeg: 92,
+    png: 97
   },
   // File extensions to process
   supportedExtensions: ['.jpg', '.jpeg', '.png', '.heic', '.JPG', '.JPEG', '.PNG', '.HEIC'],
@@ -94,7 +95,8 @@ async function getImageFiles(dir: string): Promise<{path: string, relativePath: 
             !config.skipFiles.includes(entry.name) &&
             !entry.name.includes('-300') && 
             !entry.name.includes('-600') && 
-            !entry.name.includes('-1200')) { // Skip already optimized files
+            !entry.name.includes('-1200') &&
+            !entry.name.includes('-2400')) { // Skip already optimized files
           imageFiles.push({
             path: fullPath,
             relativePath: relPath
@@ -198,10 +200,10 @@ async function optimizeImage(inputPath: string, relativePath: string): Promise<O
         savings
       });
       
-      console.log(`${sizeName}: ${outputFilename} (${optimizedSize}KB, ${savings}% smaller)`);
+      console.log(`  ✓ ${sizeName}: ${outputFilename} (${optimizedSize}KB, ${savings}% smaller)`);
       
     } catch (error) {
-      console.error(`Error processing ${sizeName}:`, error instanceof Error ? error.message : String(error));
+      console.error(`  ✗ Error processing ${sizeName}:`, error instanceof Error ? error.message : String(error));
     }
   }
   
@@ -217,19 +219,21 @@ function generateUsageExamples(results: OptimizationResult[][]): void {
   const exampleFile = results[0];
   const baseName = exampleFile[0]?.filename?.replace('-300.webp', '') || 'example';
   
-  console.log(`\nUsage example for "${baseName}":`);
+  console.log(`\n📖 Usage example for "${baseName}":`);
   console.log(`
 <img 
   src="/optimized/${baseName}-600.webp"
   srcSet="
     /optimized/${baseName}-300.webp 300w,
     /optimized/${baseName}-600.webp 600w,
-    /optimized/${baseName}-1200.webp 1200w
+    /optimized/${baseName}-1200.webp 1200w,
+    /optimized/${baseName}-2400.webp 2400w
   "
   sizes="
     (max-width: 768px) 300px,
     (max-width: 1024px) 600px,
-    1200px
+    (max-width: 1920px) 1200px,
+    2400px
   "
   alt="Description"
   className="w-full h-full object-cover"
@@ -240,7 +244,7 @@ function generateUsageExamples(results: OptimizationResult[][]): void {
  * Main optimization function
  */
 async function optimizeImages(): Promise<void> {
-  console.log('Starting image optimization...\n');
+  console.log('🚀 Starting image optimization...\n');
   
   try {
     // Ensure output directory exists
@@ -254,7 +258,7 @@ async function optimizeImages(): Promise<void> {
       return;
     }
     
-    console.log(`Found ${imageFiles.length} images to optimize:`);
+    console.log(`📁 Found ${imageFiles.length} images to optimize:`);
     imageFiles.forEach(file => console.log(`   • ${file.relativePath}`));
     
     // Process each image
@@ -265,7 +269,7 @@ async function optimizeImages(): Promise<void> {
     }
     
     // Summary
-    console.log('\nOptimization Summary:');
+    console.log('\n📊 Optimization Summary:');
     console.log(`   • Processed: ${imageFiles.length} original images`);
     console.log(`   • Generated: ${allResults.length} optimized versions`);
     
@@ -280,11 +284,11 @@ async function optimizeImages(): Promise<void> {
     // Generate usage examples
     generateUsageExamples([allResults]);
     
-    console.log(`\nAll images optimized successfully!`);
-    console.log(`Optimized images saved to: ${config.outputDir}`);
+    console.log(`\n✅ All images optimized successfully!`);
+    console.log(`📂 Optimized images saved to: ${config.outputDir}`);
     
   } catch (error) {
-    console.error('Error during optimization:', error);
+    console.error('❌ Error during optimization:', error);
     process.exit(1);
   }
 }

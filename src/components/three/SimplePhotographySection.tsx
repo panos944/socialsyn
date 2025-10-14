@@ -1,20 +1,20 @@
 'use client'
 
 import { useState } from 'react'
-import { ResponsiveImage } from '@/components/common/ResponsiveImage'
+import Image from 'next/image'
 
-// Portfolio of best client photos with metadata - using optimized images
+// Portfolio of best client photos with metadata - using Unsplash placeholder images
 const photos = [
-  { basePath: '/optimized/img_8065', client: 'LUISANT', title: 'Jewelry Photography' },
-  { basePath: '/optimized/img_8203', client: 'LUISANT', title: 'Product Showcase' },
-  { basePath: '/optimized/mindset-feed-september-2021', client: 'GRAPHICS', title: 'Brand Campaign' },
-  { basePath: '/optimized/img_7836-2', client: 'ITALOS', title: 'Brand Photography' },
-  { basePath: '/optimized/img_9439-5', client: 'JCOU', title: 'Fashion Editorial' },
-  { basePath: '/optimized/img_9419-3', client: 'LEDOM', title: 'Lifestyle Shoot' },
-  { basePath: '/optimized/image00039', client: 'LEDOM', title: 'Product Photography' },
-  { basePath: '/optimized/untitled-xsxs3', client: 'EDITORIAL', title: 'Portrait Session' },
-  { basePath: '/optimized/costarellos-feed', client: 'COSTARELLOS', title: 'Commercial Work' },
-  { basePath: '/optimized/bridal-feed', client: 'BRIDAL', title: 'Luxury Products' }
+  { url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'LUISANT', title: 'Jewelry Photography' },
+  { url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'LUISANT', title: 'Product Showcase' },
+  { url: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'GRAPHICS', title: 'Brand Campaign' },
+  { url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'ITALOS', title: 'Brand Photography' },
+  { url: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'JCOU', title: 'Fashion Editorial' },
+  { url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'LEDOM', title: 'Lifestyle Shoot' },
+  { url: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'LEDOM', title: 'Product Photography' },
+  { url: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'EDITORIAL', title: 'Portrait Session' },
+  { url: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'COSTARELLOS', title: 'Commercial Work' },
+  { url: 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'BRIDAL', title: 'Luxury Products' }
 ]
 
 export function SimplePhotographySection() {
@@ -97,8 +97,8 @@ export function SimplePhotographySection() {
           <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
             {/* Current Photo */}
             <div className={`absolute inset-0 transition-opacity duration-700 ease-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-              <ResponsiveImage
-                basePath={currentPhoto.basePath}
+              <Image
+                src={currentPhoto.url}
                 alt={currentPhoto.title}
                 fill
                 className="object-cover"
@@ -167,8 +167,8 @@ export function SimplePhotographySection() {
                   : 'opacity-60 hover:opacity-100 hover:scale-102'
               }`}
             >
-              <ResponsiveImage
-                basePath={photo.basePath}
+              <Image
+                src={photo.url}
                 alt={photo.title}
                 fill
                 className="object-cover"
