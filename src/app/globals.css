@@ -118,6 +118,14 @@
   overflow: hidden;
 }
 
+/* Mobile framing: keep full cover (no gaps) but shift composition */
+@media (max-width: 640px) {
+  .hero-video {
+    object-position: center 28%;
+    height: 100% !important;
+  }
+}
+
 /* La Casa Alma inspired styles */
 .serif-heading {
   font-family: 'Cormorant Garamond', serif;

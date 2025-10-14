@@ -62,7 +62,7 @@ export default function Header() {
       }`}
     >
       <div className="container mx-auto px-8 md:px-12 flex justify-between items-center">
-        <Link href="/" className="flex items-center">
+        <Link href="/" className="flex items-center" aria-label="Socialsyn home">
           <span className={`font-heading text-2xl ${isScrolled ? 'text-primary' : 'text-white'}`}>
             Social<span className="text-accent-foreground">syn</span>
           </span>

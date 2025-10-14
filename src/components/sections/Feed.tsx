@@ -3,21 +3,21 @@
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 
-// Feed images - using tall, scrollable images for Instagram-style feed experience
+// Feed images - using local feed exports
 const feedImages = [
   {
-    url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&h=3000&q=80',
-    title: 'Fashion Editorial',
+    url: '/JCOU FEED-1.heic',
+    title: 'JCOU Feed',
     description: 'Social Media Feed'
   },
   {
-    url: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&h=3000&q=80',
-    title: 'Lifestyle Collection',
+    url: '/costarellos%20feed.heic',
+    title: 'Costarellos Feed',
     description: 'Social Media Feed'
   },
   {
-    url: 'https://images.unsplash.com/photo-1558769132-cb1aea9c516c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1080&h=3000&q=80',
-    title: 'Street Style',
+    url: '/BRIDAL%20FEED.heic',
+    title: 'Bridal Feed',
     description: 'Social Media Feed'
   }
 ]

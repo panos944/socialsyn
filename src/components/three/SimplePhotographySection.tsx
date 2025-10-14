@@ -3,18 +3,18 @@
 import { useState } from 'react'
 import Image from 'next/image'
 
-// Portfolio of best client photos with metadata - using Unsplash placeholder images
+// Portfolio of best client photos with metadata - using local images where possible
 const photos = [
-  { url: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'LUISANT', title: 'Jewelry Photography' },
-  { url: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'LUISANT', title: 'Product Showcase' },
-  { url: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'GRAPHICS', title: 'Brand Campaign' },
-  { url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'ITALOS', title: 'Brand Photography' },
-  { url: 'https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'JCOU', title: 'Fashion Editorial' },
-  { url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'LEDOM', title: 'Lifestyle Shoot' },
-  { url: 'https://images.unsplash.com/photo-1554048612-b6a482bc67e5?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'LEDOM', title: 'Product Photography' },
-  { url: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'EDITORIAL', title: 'Portrait Session' },
-  { url: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'COSTARELLOS', title: 'Commercial Work' },
-  { url: 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80', client: 'BRIDAL', title: 'Luxury Products' }
+  { url: '/images/LUISANT/IMG_8065.JPG', client: 'LUISANT', title: 'Jewelry Photography' },
+  { url: '/images/LUISANT/IMG_8203.JPG', client: 'LUISANT', title: 'Product Showcase' },
+  { url: '/images/GRAPHICS/IMG_8319.JPG', client: 'GRAPHICS', title: 'Brand Campaign' },
+  { url: '/images/ITALOS/IMG_7836%202.JPG', client: 'ITALOS', title: 'Brand Photography' },
+  { url: '/images/JCou/IMG_9439%205.JPG', client: 'JCOU', title: 'Fashion Editorial' },
+  { url: '/images/LEDOM/IMG_9419%203.JPG', client: 'LEDOM', title: 'Lifestyle Shoot' },
+  { url: '/images/LEDOM/IMG_9779.jpg', client: 'LEDOM', title: 'Product Photography' },
+  { url: '/images/PHOTIS/IMG_0796.JPG', client: 'EDITORIAL', title: 'Portrait Session' },
+  { url: '/images/ZALO/IMG_2017.JPG', client: 'COSTARELLOS', title: 'Commercial Work' },
+  { url: '/images/DOMAINE%20HATZIMICHALIS/IMG_2290.JPG', client: 'BRIDAL', title: 'Luxury Products' }
 ]
 
 export function SimplePhotographySection() {

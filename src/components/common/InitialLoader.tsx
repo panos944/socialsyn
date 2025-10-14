@@ -49,15 +49,17 @@ export default function InitialLoader({ force = false }: InitialLoaderProps) {
     // Show discrete branded steps rather than a continuous counter
     // Ensure we always traverse all steps, and extend timing slightly
     const steps = [0, 24, 48, 72, 100]
-    const stepDelay = 900 // ms per step (total ~4.5s)
+    const stepDelay = 1200 // ms per step (total ~6s)
     const timeouts: number[] = []
 
     steps.forEach((value, index) => {
       const id = window.setTimeout(() => {
         setProgress(value)
         if (value === 100) {
-          // Hold at 100 a bit longer so it's clearly visible before fade
-          window.setTimeout(() => setVisible(false), 1600)
+          // Notify the app that the loader sequence has completed
+          try { window.dispatchEvent(new CustomEvent('initial-loader:done')) } catch {}
+          // Hold at 100 a touch less for snappier feel
+          window.setTimeout(() => setVisible(false), 1500)
           if (typeof window !== 'undefined') {
             sessionStorage.setItem('initial-loader-shown', '1')
           }
