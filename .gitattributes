@@ -7,3 +7,5 @@
 *.mp4 filter=lfs diff=lfs merge=lfs -text
 
 public/images-used/** -filter -diff -merge -text
+
+public/video-output-02B0EFCF-7710-41BF-B442-B39610C77A3F-2.mov -filter -diff -merge -text
