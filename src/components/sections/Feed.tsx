@@ -6,18 +6,18 @@ import Image from 'next/image'
 // Feed images - using local feed exports
 const feedImages = [
   {
-    url: '/JCOU FEED-1.heic',
+    url: '/images/Feeds/BABYLINE-1.jpeg',
+    title: 'Babyline Feed',
+    description: 'Social Media Feed'
+  },
+  {
+    url: '/images/Feeds/costarellos_feed_2.jpg',
     title: 'JCOU Feed',
     description: 'Social Media Feed'
   },
   {
-    url: '/costarellos%20feed.heic',
-    title: 'Costarellos Feed',
-    description: 'Social Media Feed'
-  },
-  {
-    url: '/BRIDAL%20FEED.heic',
-    title: 'Bridal Feed',
+    url: '/images/Feeds/honey.jpg',
+    title: 'Riza Feed',
     description: 'Social Media Feed'
   }
 ]

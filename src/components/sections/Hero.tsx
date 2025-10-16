@@ -8,7 +8,7 @@ export default function Hero() {
   const [loaderDone, setLoaderDone] = useState(false);
   const [revealIndex, setRevealIndex] = useState(-1); // -1 means not started
   const [isAnimatingStep, setIsAnimatingStep] = useState(false);
-  const words = ['Creative', 'solutions', 'for', 'ambitious', 'brands'];
+  const words = ['Grow', 'Bold.', 'BR', 'Stand', 'Out.'];
   const ctaVisible = revealIndex >= words.length - 1; // CTA appears as soon as last word is revealed
   const isBlockingScroll = loaderDone && !ctaVisible; // block until CTA visible
   const ready = loaderDone && revealIndex >= 0; // subtitle shows after first step
@@ -160,15 +160,19 @@ export default function Hero() {
               className="serif-heading text-white text-5xl md:text-7xl lg:text-8xl mb-8 leading-tight flex flex-wrap gap-x-3"
             >
               {words.map((w, i) => (
-                <motion.span
-                  key={i}
-                  initial={false}
-                  animate={revealIndex >= i ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-                  transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-                  className="inline-block"
-                >
-                  {w}
-                </motion.span>
+                w === 'BR' ? (
+                  <span key={`br-${i}`} className="basis-full w-full h-0" />
+                ) : (
+                  <motion.span
+                    key={i}
+                    initial={false}
+                    animate={revealIndex >= i ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+                    transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+                    className="inline-block"
+                  >
+                    {w}
+                  </motion.span>
+                )
               ))}
             </motion.h1>
             
@@ -210,6 +214,28 @@ export default function Hero() {
           </div>
         </div>
       </div>
+      {/* Bottom-centered subtle scroll cue */}
+      <motion.a
+        href="#services"
+        onClick={(e) => scrollToSection(e, "#services")}
+        className={`absolute bottom-6 inset-x-0 z-10 flex flex-col items-center text-center text-white/80 hover:text-white transition-colors ${ctaVisible ? '' : 'pointer-events-none'}`}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0, ease: [0.6, -0.05, 0.01, 0.99] }}
+        aria-label="Scroll down for more"
+      >
+        <span className="text-xs md:text-sm uppercase tracking-[0.2em] mb-2">Scroll down for more</span>
+        <motion.span
+          initial={false}
+          animate={{ y: [0, 6, 0] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+          className="inline-flex"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </motion.span>
+      </motion.a>
     </section>
   );
 }
