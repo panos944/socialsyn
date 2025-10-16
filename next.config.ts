@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
   },
   // Removed output: 'standalone' - this was causing 404 errors on Vercel
   serverExternalPackages: ['sharp'],
+  async rewrites() {
+    return [
+      {
+        source: '/images/:path*',
+        destination: '/images-used/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;
