@@ -6,17 +6,17 @@ import Image from 'next/image'
 // Feed images - using local feed exports
 const feedImages = [
   {
-    url: '/images/Feeds/BABYLINE-1.jpeg',
+    url: '/images-used/Feeds/BABYLINE-1.jpeg',
     title: 'Babyline Feed',
     description: 'Social Media Feed'
   },
   {
-    url: '/images/Feeds/costarellos_feed_2.jpg',
-    title: 'JCOU Feed',
+    url: '/images-used/Feeds/costarellos_feed_2.jpg',
+    title: 'Costarellos Feed',
     description: 'Social Media Feed'
   },
   {
-    url: '/images/Feeds/honey.jpg',
+    url: '/images-used/Feeds/honey.jpg',
     title: 'Riza Feed',
     description: 'Social Media Feed'
   }

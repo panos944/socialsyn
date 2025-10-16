@@ -107,7 +107,7 @@ export default function About() {
               <motion.div variants={itemVariants} className="relative z-10"
 >
                 <Image 
-                  src={"/images/LEDOM/image00023.jpeg"} 
+                  src={"/images-used/LEDOM/image00023.jpeg"} 
                   alt="About Us"
                   width={900}
                   height={900}
