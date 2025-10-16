@@ -2,9 +2,21 @@
 node_modules/
 */node_modules/
 
-# Images - ignore original JPG files (optimized WebP versions are used)
-*.jpg
-*.JPG
+# Public assets: keep only images actually used
+# Allow tracked folder for used images
+!public/images-used/
+!public/images-used/**
+
+# Ignore all other images under public/images
+public/images/**
+
+# Ignore other optimized outputs if any
+public/optimized/**
+
+# Videos: ignore all except the current hero video
+public/**/*.mp4
+public/**/*.mov
+!public/video-output-02B0EFCF-7710-41BF-B442-B39610C77A3F-2.mov
 
 # Environment variables
 .env
@@ -96,6 +108,3 @@ Thumbs.db
 # Lock files (optional - you may want to keep these)
 package-lock.json
 yarn.lock
-
-#Claude
-.CLAUDE.md

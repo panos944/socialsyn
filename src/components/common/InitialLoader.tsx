@@ -48,8 +48,8 @@ export default function InitialLoader({ force = false }: InitialLoaderProps) {
 
     // Show discrete branded steps rather than a continuous counter
     // Ensure we always traverse all steps, and extend timing slightly
-    const steps = [0, 24, 48, 72, 100]
-    const stepDelay = 1000 // ms per step (total ~3.2s)
+    const steps = [0, 48, 72, 100]
+    const stepDelay = 900 // ms per step (total ~3.2s)
     const timeouts: number[] = []
 
     steps.forEach((value, index) => {

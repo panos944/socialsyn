@@ -177,12 +177,12 @@ async function optimizeImage(inputPath: string, relativePath: string): Promise<O
       
       // Process image with Sharp - disable auto-rotation to preserve original orientation
       await sharp(inputPath)
-        .rotate() // Apply EXIF rotation first, then we can control it
+        .rotate() // Apply EXIF rotation first
         .resize(sizeConfig.width, sizeConfig.height, {
-          fit: 'contain',  // Changed from 'cover' to 'contain'
-          position: 'center',
-          background: { r: 255, g: 255, b: 255, alpha: 0 } // Transparent background
+          fit: 'cover',
+          position: 'centre'
         })
+        .withMetadata() // preserve ICC profiles/metadata
         .webp({ 
           quality: config.quality.webp,
           effort: 6 // Higher effort for better compression
