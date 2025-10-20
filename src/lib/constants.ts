@@ -2,15 +2,15 @@
 export const services = [
   {
     id: 1,
-    title: "Digital Marketing",
-    description: "Strategic campaigns that increase visibility, drive traffic, and boost conversions across digital platforms.",
+    title: "Brand Strategy & Digital Marketing",
+    description: "Strategic direction that combines creativity with performance. We develop campaigns, advertising concepts, and digital initiatives that build visibility and measurable growth.",
     image: "/images/DOMAINE HATZIMICHALIS/SUNSET XORA 6.JPG",
     features: ["SEO Optimization", "PPC Advertising", "Content Marketing"],
   },
   {
     id: 2,
-    title: "Social Media",
-    description: "Expert management of your social platforms to build community, engagement, and brand loyalty.",
+    title: "Social Media Management",
+    description: "We create and manage your social presence, curating the feed, writing captions, handling community management, and optimizing Meta Ads.",
     image: "/images/LEDOM/IMG_9580.jpg",
     instagramGrid: true,
     feedImage: "public/images/LEDOM/IMG_9580.jpg",
@@ -19,15 +19,15 @@ export const services = [
   {
     id: 3,
     title: "Photography",
-    description: "Professional photography services that capture your brand's essence and elevate your visual content.",
+    description: "We produce photoshoots that capture your brand’s identity and communicate its story with clarity and intent.",
     image: "/images/LUISANT/IMG_8203.JPG",
     features: ["Product Photography", "Brand Storytelling", "Corporate Headshots"],
   },
   {
     id: 4,
-    title: "Graphic Design",
-    description: "Creative visual solutions that communicate your brand's message and captivate your audience.",
-    image: "/images/GRAPHICS/IMG_8319.JPG",
+    title: "Content & Design Studio",
+    description: "We create branded visuals, newsletters, and digital assets that express your identity with consistency, emotion, and purpose.",
+    image: "/images-used/GRAPHICS/nulicious desk work-01 2.JPG",
     features: ["Brand Identity", "Social Media Graphics", "Print & Digital Materials"],
   },
 ];

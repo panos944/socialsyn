@@ -222,9 +222,9 @@ export default function Hero() {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0, ease: [0.6, -0.05, 0.01, 0.99] }}
-        aria-label="Scroll down for more"
+        aria-label="Scroll to discover"
       >
-        <span className="text-xs md:text-sm uppercase tracking-[0.2em] mb-2">Scroll down for more</span>
+        <span className="text-xs md:text-sm uppercase tracking-[0.2em] mb-2">Scroll to discover</span>
         <motion.span
           initial={false}
           animate={{ y: [0, 6, 0] }}

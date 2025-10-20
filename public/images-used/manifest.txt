@@ -4,6 +4,10 @@
 /images/Feeds/BABYLINE-1.jpeg
 /images/Feeds/costarellos_feed_2.jpg
 /images/Feeds/honey.jpg
+/images/Feeds/babyline-feed.jpg
+/images/Feeds/italos-feed.jpg
+/images/Feeds/JCOU_FEED-1.jpg
+/images/Feeds/wine-feed.jpg
 /images/GRAPHICS/IMG_8319.JPG
 /images/GRAPHICS/nulicious%20desk%20work-01%202.JPG
 /images/ITALOS/IMG_7836%202.JPG
@@ -17,3 +21,4 @@
 /images/PHOTIS/IMG_0796.JPG
 /images/ZALO/DSC00399.jpg
 /images/ZALO/IMG_2017.JPG
+/images/Brand-section.jpeg

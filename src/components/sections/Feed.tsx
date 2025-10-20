@@ -6,7 +6,12 @@ import Image from 'next/image'
 // Feed images - using local feed exports
 const feedImages = [
   {
-    url: '/images-used/Feeds/BABYLINE-1.jpeg',
+    url: '/images-used/Feeds/honey.jpg',
+    title: 'Riza Feed',
+    description: 'Social Media Feed'
+  },
+  {
+    url: '/images-used/Feeds/babyline-feed.jpg',
     title: 'Babyline Feed',
     description: 'Social Media Feed'
   },
@@ -16,18 +21,29 @@ const feedImages = [
     description: 'Social Media Feed'
   },
   {
-    url: '/images-used/Feeds/honey.jpg',
-    title: 'Riza Feed',
+    url: '/images-used/Feeds/italos-feed.jpg',
+    title: 'Italos Feed',
+    description: 'Social Media Feed'
+  },
+  {
+    url: '/images-used/Feeds/JCOU_FEED-1.jpg',
+    title: 'JCOU Feed',
+    description: 'Social Media Feed'
+  },
+  {
+    url: '/images-used/Feeds/wine-feed.jpg',
+    title: 'Hatzimihalis Feed',
     description: 'Social Media Feed'
   }
 ]
 
 export function Feed() {
   const [scrollPosition, setScrollPosition] = useState(0)
+  const [maxScroll, setMaxScroll] = useState(0)
   const [currentFeedIndex, setCurrentFeedIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
-  const maxScroll = 350 // Percentage of container height to scroll (stops before black areas)
+  const imageRef = useRef<HTMLImageElement>(null)
 
   useEffect(() => {
     const container = containerRef.current
@@ -37,10 +53,10 @@ export function Feed() {
       e.preventDefault()
       e.stopPropagation()
       const delta = e.deltaY
-      const scrollSpeed = 2
+      const scrollSpeed = 1
 
       setScrollPosition(prev => {
-        const newPosition = prev + (delta * scrollSpeed / 10)
+        const newPosition = prev + (delta * scrollSpeed)
         return Math.max(0, Math.min(maxScroll, newPosition))
       })
     }
@@ -51,6 +67,30 @@ export function Feed() {
       container.removeEventListener('wheel', handleWheelEvent)
     }
   }, [maxScroll])
+
+  useEffect(() => {
+    const container = containerRef.current
+    const img = imageRef.current
+    if (!container || !img) return
+
+    const compute = () => {
+      const containerHeight = container.clientHeight
+      const imageHeight = img.clientHeight
+      const max = Math.max(0, imageHeight - containerHeight)
+      setMaxScroll(max)
+      setScrollPosition(prev => Math.min(prev, max))
+    }
+
+    compute()
+
+    window.addEventListener('resize', compute)
+    img.addEventListener('load', compute)
+
+    return () => {
+      window.removeEventListener('resize', compute)
+      img.removeEventListener('load', compute)
+    }
+  }, [currentFeedIndex])
 
 
 
@@ -96,7 +136,7 @@ export function Feed() {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-light text-white mb-4">Feed</h2>
-          <p className="text-gray-400 text-lg">Social content that drives engagement</p>
+          <p className="text-gray-400 text-lg">Curated content that builds connection, consistency, and engagement.</p>
         </div>
 
         {/* Main Hero Feed with Side Previews */}
@@ -199,7 +239,7 @@ export function Feed() {
                 isTransitioning ? 'opacity-0' : 'opacity-100'
               }`}
               style={{
-                top: `-${scrollPosition}%`,
+                top: `-${scrollPosition}px`,
                 height: 'auto'
               }}
             >
@@ -213,6 +253,7 @@ export function Feed() {
                 priority
                 quality={95}
                 style={{ objectFit: 'cover', objectPosition: 'center top' }}
+                ref={imageRef}
               />
             </div>
             
@@ -257,13 +298,13 @@ export function Feed() {
             {/* Progress Fill */}
             <div 
               className="absolute top-0 left-0 w-px bg-white transition-all duration-500 ease-out"
-              style={{ height: `${(scrollPosition / maxScroll) * 100}%` }}
+              style={{ height: `${maxScroll > 0 ? (scrollPosition / maxScroll) * 100 : 0}%` }}
             ></div>
             {/* Current Position Indicator */}
             <div 
               className="absolute left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-white shadow-lg transition-all duration-500 ease-out"
               style={{ 
-                top: `${(scrollPosition / maxScroll) * 100}%`, 
+                top: `${maxScroll > 0 ? (scrollPosition / maxScroll) * 100 : 0}%`, 
                 transform: 'translateX(-50%) translateY(-50%)' 
               }}
             ></div>

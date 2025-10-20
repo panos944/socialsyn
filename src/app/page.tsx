@@ -10,7 +10,7 @@ import Footer from '@/components/layout/Footer';
 import Hero from '@/components/sections/Hero';
 import Services from '@/components/sections/Services';
 import About from '@/components/sections/About';
-import Portfolio from '@/components/sections/Portfolio';
+import Image from 'next/image';
 import CTA from '@/components/sections/CTA';
 import Contact from '@/components/sections/Contact';
 import { Feed } from '@/components/sections/Feed';
@@ -64,9 +64,19 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Portfolio Section */}
+          {/* Brand Image Section replacing Portfolio */}
           <section className="min-h-screen bg-white relative z-20">
-            <Portfolio />
+            <div className="absolute inset-0">
+              <Image 
+                src="/images-used/Brand-section.jpeg"
+                alt="Brand section"
+                fill
+                sizes="100vw"
+                className="object-cover"
+                priority
+                quality={90}
+              />
+            </div>
           </section>
           
           {/* CTA Section */}
