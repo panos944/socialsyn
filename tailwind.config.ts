@@ -56,7 +56,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'sans-serif'],
-        mono: ['var(--font-geist-mono)', 'monospace'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', 'Courier New', 'monospace'],
         serif: ['Cormorant Garamond', 'serif'],
       },
     },
