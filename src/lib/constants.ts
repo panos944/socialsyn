@@ -116,26 +116,26 @@ export const testimonials = [
 export const stats = [
   {
     id: 1,
-    value: "300+",
+    value: "200+",
     label: "Projects Completed",
     icon: "trophy",
   },
   {
     id: 2,
-    value: "150+",
-    label: "Happy Clients",
+    value: "70+",
+    label: "Brands & Clients",
     icon: "users",
   },
   {
     id: 3,
-    value: "25+",
-    label: "Industry Awards",
+    value: "100+",
+    label: "Creative Productions",
     icon: "award",
   },
   {
     id: 4,
-    value: "500%",
-    label: "Average ROI",
+    value: "5000+",
+    label: "Posts Shared",
     icon: "chart-line",
   },
 ];

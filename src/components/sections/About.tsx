@@ -51,7 +51,7 @@ export default function About() {
             <motion.div variants={itemVariants}>
               <div className="section-label">OUR STORY</div>
               <h2 className="serif-heading text-4xl md:text-5xl mb-8">
-                We craft digital experiences that resonate
+                The Art of Synthesis
               </h2>
             </motion.div>
             
@@ -60,14 +60,14 @@ export default function About() {
               style={{ color: 'hsl(var(--neutral-light))' }}
               variants={itemVariants}
             >
-              Socialsyn is a boutique digital marketing agency driven by a passion for creating meaningful connections between brands and their audiences. We blend strategic thinking with creative execution to deliver results that exceed expectations.
+              We craft social experiences that resonate. At SocialSyn, we believe in synthesis, the harmony of strategy, creativity and storytelling. We help brands communicate with intention and emotion, creating work that resonates across every social platform.
             </motion.p>
             <motion.p 
               className="text-base mb-12"
               style={{ color: 'hsl(var(--neutral-light))' }}
               variants={itemVariants}
             >
-              Our approach is simple yet effective: understand your goals, craft a tailored strategy, and execute with precision and creativity.
+              We help brands grow by creating cohesive, visually refined content and curated feeds that capture their unique identity.
             </motion.p>
 
             <div className="grid grid-cols-2 gap-x-8 gap-y-12 mb-12">

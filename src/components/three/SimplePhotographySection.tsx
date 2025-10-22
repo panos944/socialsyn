@@ -5,14 +5,14 @@ import Image from 'next/image'
 
 // Portfolio of best client photos with metadata - using local images where possible
 const photos = [
-  { url: '/images-used/LUISANT/IMG_8065.JPG', client: 'LUISANT', title: 'Jewelry Photography' },
+  { url: '/images/LEDOM/IMG_9784.jpg', client: 'LEDOM SS24 Campaign', title: 'Production & Photography' },
   { url: '/images-used/LUISANT/IMG_8203.JPG', client: 'LUISANT', title: 'Product Showcase' },
   { url: '/images-used/GRAPHICS/IMG_8319.JPG', client: 'GRAPHICS', title: 'Brand Campaign' },
-  { url: '/images-used/ITALOS/IMG_7836%202.JPG', client: 'ITALOS', title: 'Brand Photography' },
-  { url: '/images-used/JCou/IMG_9439%205.JPG', client: 'JCOU', title: 'Fashion Editorial' },
-  { url: '/images-used/LEDOM/IMG_9419%203.JPG', client: 'LEDOM', title: 'Lifestyle Shoot' },
-  { url: '/images-used/LEDOM/IMG_9779.jpg', client: 'LEDOM', title: 'Product Photography' },
-  { url: '/images-used/PHOTIS/IMG_0796.JPG', client: 'EDITORIAL', title: 'Portrait Session' },
+  { url: '/images/LUISANT/IMG_8065.JPG', client: 'LUISANT SS23 Campaign', title: 'Production & Photography'},
+  { url: '/images/ITALOS/IMG_7733.JPG', client: 'ITALOS Restaurant Lifestyle', title: 'Photography' },
+  { url: '/images/DOMAINE HATZIMICHALIS/IMG_2294 3.JPG', client: 'DOMAINE HATZIMICHALIS', title: 'Lifestyle Editorial' },
+  { url: '/images/ZALO/IMG_1993 2.JPG', client: 'ZALO SS24 Campaign', title: 'Production & Photography' },
+  { url: '/images/PHOTIS/IMG_0796.JPG', client: 'PHOTIS', title: 'Brand & Store Photography' },
   { url: '/images-used/ZALO/IMG_2017.JPG', client: 'COSTARELLOS', title: 'Commercial Work' },
   { url: '/images-used/DOMAINE%20HATZIMICHALIS/IMG_2290.JPG', client: 'BRIDAL', title: 'Luxury Products' }
 ]
