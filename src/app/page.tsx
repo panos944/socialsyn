@@ -67,15 +67,30 @@ export default function Home() {
           {/* Brand Image Section replacing Portfolio */}
           <section className="min-h-screen bg-white relative z-20">
             <div className="absolute inset-0">
-              <Image 
-                src="/images-used/Brand-section.jpeg"
-                alt="Brand section"
-                fill
-                sizes="100vw"
-                className="object-cover"
-                priority
-                quality={90}
-              />
+              {/* Mobile: compact brand logos image */}
+              <div className="md:hidden absolute inset-0">
+                <Image
+                  src="/website-logos-small.jpg"
+                  alt="Brand section logos"
+                  fill
+                  sizes="100vw"
+                  className="object-cover"
+                  priority
+                  quality={85}
+                />
+              </div>
+              {/* Desktop/Tablet: full brand section image */}
+              <div className="hidden md:block absolute inset-0">
+                <Image
+                  src="/images-used/Brand-section.jpeg"
+                  alt="Brand section"
+                  fill
+                  sizes="100vw"
+                  className="object-cover"
+                  priority
+                  quality={90}
+                />
+              </div>
             </div>
           </section>
           
