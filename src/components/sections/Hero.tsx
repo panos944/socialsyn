@@ -135,7 +135,8 @@ export default function Hero() {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
+          poster="/media/hero-video-poster.jpg"
           controls={false}
           controlsList="nodownload noplaybackrate noremoteplayback noplay"
           disablePictureInPicture
@@ -147,8 +148,8 @@ export default function Hero() {
             WebkitTouchCallout: 'none',
           }}
         >
-          <source src="/video-output-02B0EFCF-7710-41BF-B442-B39610C77A3F-2.mov" type="video/quicktime" />
-          <source src="/video-output-02B0EFCF-7710-41BF-B442-B39610C77A3F-2.mov" type="video/mp4" />
+          <source src="/media/hero-video-1080p.webm" type="video/webm" />
+          <source src="/media/hero-video-1080p.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </motion.div>
