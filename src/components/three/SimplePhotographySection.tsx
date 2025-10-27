@@ -1,33 +1,41 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
+import { AnimatePresence, motion } from 'framer-motion'
+
+type PhotoItem = {
+  url?: string
+  client?: string
+  title?: string
+  empty?: boolean
+}
 
 // Portfolio of best client photos with metadata - using local images where possible
-const photos = [
+const photos: PhotoItem[] = [
   { url: '/images/LEDOM/IMG_9784.jpg', client: 'LEDOM SS24 Campaign', title: 'Production & Photography' },
-  { url: '/images-used/LUISANT/IMG_8203.JPG', client: 'LUISANT', title: 'Product Showcase' },
-  { url: '/images-used/GRAPHICS/IMG_8319.JPG', client: 'GRAPHICS', title: 'Brand Campaign' },
+  { url: '/images/IMG_6977_low.jpg', client: 'COSTARELLOS', title: 'SS23 Campaign BTS' },
+  { url: '/images/IMG_7390.jpg', client: 'JCOU', title: 'Social Media Editorial Photography' },
   { url: '/images/LUISANT/IMG_8065.JPG', client: 'LUISANT SS23 Campaign', title: 'Production & Photography'},
   { url: '/images/ITALOS/IMG_7733.JPG', client: 'ITALOS Restaurant Lifestyle', title: 'Photography' },
+  { url: '/images/IMG_5866 2.JPG', client: 'JCOU', title: 'Product Photography for Social Media' },
   { url: '/images/DOMAINE HATZIMICHALIS/IMG_2294 3.JPG', client: 'DOMAINE HATZIMICHALIS', title: 'Lifestyle Editorial' },
   { url: '/images/ZALO/IMG_1993 2.JPG', client: 'ZALO SS24 Campaign', title: 'Production & Photography' },
   { url: '/images/PHOTIS/IMG_0796.JPG', client: 'PHOTIS', title: 'Brand & Store Photography' },
-  { url: '/images-used/ZALO/IMG_2017.JPG', client: 'COSTARELLOS', title: 'Commercial Work' },
-  { url: '/images-used/DOMAINE%20HATZIMICHALIS/IMG_2290.JPG', client: 'BRIDAL', title: 'Luxury Products' }
+  { url: '/images/IMG_8669.JPG', client: 'COSTARELLOS BRIDAL', title: 'BTS Photography' },
+  { url: '/images/LUISANT-15-11-22-28986.JPG', client: 'LUISANT', title: 'Holiday Studio Shoot' },
+  { url: '/images/IMG_5831 2.JPG', client: 'NULICIOUS', title: 'Product & Food Photography' }
 ]
 
 export function SimplePhotographySection() {
   const [displayIndex, setDisplayIndex] = useState(0)
-  const [incomingIndex, setIncomingIndex] = useState<number | null>(null)
-  const [incomingLoaded, setIncomingLoaded] = useState(false)
   const [isTransitioning, setIsTransitioning] = useState(false)
 
   const queueTransition = (targetIndex: number) => {
     if (isTransitioning || targetIndex === displayIndex) return
     setIsTransitioning(true)
-    setIncomingLoaded(false)
-    setIncomingIndex(targetIndex)
+    setDisplayIndex(targetIndex)
+    window.setTimeout(() => setIsTransitioning(false), 420)
   }
 
   const nextPhoto = () => {
@@ -40,19 +48,10 @@ export function SimplePhotographySection() {
     queueTransition(prev)
   }
 
-  // When the incoming image has loaded, crossfade and then finalize swap
-  useEffect(() => {
-    if (!isTransitioning || !incomingLoaded || incomingIndex === null) return
-    const timeout = window.setTimeout(() => {
-      setDisplayIndex(incomingIndex)
-      setIncomingIndex(null)
-      setIncomingLoaded(false)
-      setIsTransitioning(false)
-    }, 320) // match CSS duration below
-    return () => window.clearTimeout(timeout)
-  }, [isTransitioning, incomingLoaded, incomingIndex])
-
   const currentPhoto = photos[displayIndex]
+  const isCurrentEmpty = currentPhoto?.empty
+  const currentClient = currentPhoto.client ?? 'Upcoming project'
+  const currentTitle = currentPhoto.title ?? 'Stay tuned for our next story'
 
   return (
     <section className="photography-section min-h-screen bg-gradient-to-b from-black via-gray-900 to-black py-20">
@@ -108,43 +107,49 @@ export function SimplePhotographySection() {
           </button>
 
           <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
-            {/* Base (currently displayed) photo */}
-            <div className={`absolute inset-0 transition-opacity duration-300 ease-out ${incomingIndex !== null ? 'opacity-0' : 'opacity-100'}`}>
-              <Image
-                key={`display-${displayIndex}`}
-                src={currentPhoto.url}
-                alt={currentPhoto.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 1000px) 100vw, (max-width: 1500px) 80vw, 70vw"
-                priority
-                quality={90}
-              />
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={displayIndex}
+                className="absolute inset-0"
+                initial={{ opacity: 0, scale: 0.985 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.015 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              >
+                {isCurrentEmpty ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-white/10 via-white/5 to-white/0 backdrop-blur-sm">
+                    <span className="uppercase tracking-[0.4em] text-xs text-white/50 mb-3">Coming Soon</span>
+                    <span className="text-white/80 text-lg font-light">New visual story in progress</span>
+                  </div>
+                ) : (
+                  <Image
+                    src={currentPhoto.url!}
+                    alt={currentPhoto.title ?? 'Portfolio image'}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1000px) 100vw, (max-width: 1500px) 80vw, 70vw"
+                    priority={displayIndex === 0}
+                    quality={90}
+                  />
+                )}
+              </motion.div>
+            </AnimatePresence>
 
-            {/* Incoming photo (rendered only when transitioning) */}
-            {incomingIndex !== null && (
-              <div className={`absolute inset-0 transition-opacity duration-300 ease-out ${incomingLoaded ? 'opacity-100' : 'opacity-0'}`}>
-                <Image
-                  key={`incoming-${incomingIndex}`}
-                  src={photos[incomingIndex].url}
-                  alt={photos[incomingIndex].title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1000px) 100vw, (max-width: 1500px) 80vw, 70vw"
-                  quality={90}
-                  onLoadingComplete={() => setIncomingLoaded(true)}
-                />
-              </div>
-            )}
-            
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent z-5"></div>
-            
-            {/* Photo Info Overlay */}
-            <div className={`absolute bottom-6 left-6 text-white z-10 transition-all duration-300 ease-out ${incomingIndex !== null ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
-              <p className="text-sm uppercase tracking-wider opacity-70 mb-1">{currentPhoto.client}</p>
-              <h3 className="text-2xl font-light">{currentPhoto.title}</h3>
-            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`info-${displayIndex}`}
+                className="absolute bottom-6 left-6 text-white z-10"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+              >
+                <p className="text-sm uppercase tracking-wider opacity-70 mb-1">{currentClient}</p>
+                <h3 className="text-2xl font-light">{currentTitle}</h3>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
 
@@ -168,41 +173,57 @@ export function SimplePhotographySection() {
         
         {/* Elegant Photo Title */}
         <div className="text-center mb-8">
-          <div className={`transition-all duration-300 ease-out ${incomingIndex !== null ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'}`}>
-            <p className="text-white/60 text-sm uppercase tracking-widest mb-2">
-              {currentPhoto.client}
-            </p>
-            <h3 className="text-white text-xl font-light">
-              {currentPhoto.title}
-            </h3>
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`title-${displayIndex}`}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
+            >
+              <p className="text-white/60 text-sm uppercase tracking-widest mb-2">
+                {currentClient}
+              </p>
+              <h3 className="text-white text-xl font-light">
+                {currentTitle}
+              </h3>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Thumbnail Gallery */}
-        <div className="grid grid-cols-5 md:grid-cols-10 gap-2 max-w-6xl mx-auto">
-          {photos.map((photo, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                if (isTransitioning || index === displayIndex) return
-                queueTransition(index)
-              }}
-              className={`relative aspect-square rounded-lg overflow-hidden transition-all duration-500 ease-in-out ${
-                index === displayIndex 
-                  ? 'ring-2 ring-white scale-105 opacity-100' 
-                  : 'opacity-60 hover:opacity-100 hover:scale-102'
-              }`}
-            >
-              <Image
-                src={photo.url}
-                alt={photo.title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 20vw, 10vw"
-                quality={60}
-              />
-            </button>
-          ))}
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-wrap md:flex-nowrap justify-center md:justify-between gap-3">
+            {photos.map((photo, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  if (isTransitioning || index === displayIndex) return
+                  queueTransition(index)
+                }}
+                className={`relative h-20 w-20 md:h-24 md:w-24 rounded-xl overflow-hidden transition-all duration-400 ease-in-out ${
+                  index === displayIndex 
+                    ? 'ring-2 ring-white scale-105 opacity-100 shadow-lg' 
+                    : 'opacity-70 hover:opacity-100 hover:scale-105'
+                } ${photo.empty ? 'pointer-events-none' : ''}`}
+              >
+                {photo.empty ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/10">
+                    <span className="uppercase text-[10px] tracking-[0.3em] text-white/40">Coming Soon</span>
+                  </div>
+                ) : (
+                  <Image
+                    src={photo.url!}
+                    alt={photo.title ?? 'Portfolio thumbnail'}
+                    fill
+                    className="object-cover"
+                    sizes="96px"
+                    quality={70}
+                  />
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </section>

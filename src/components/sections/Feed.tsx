@@ -7,32 +7,32 @@ import Image from 'next/image'
 const feedImages = [
   {
     url: '/images-used/Feeds/honey.jpg',
-    title: 'Riza Feed',
+    title: 'Riza',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/babyline-feed.jpg',
-    title: 'Babyline Feed',
+    title: 'Babyline',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/costarellos_feed_2.jpg',
-    title: 'Costarellos Feed',
+    title: 'Costarellos',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/italos-feed.jpg',
-    title: 'Italos Feed',
+    title: 'O Italos',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/JCOU_FEED-1.jpg',
-    title: 'JCOU Feed',
+    title: 'JCou',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/wine-feed.jpg',
-    title: 'Hatzimihalis Feed',
+    title: 'Domaine Hatzimihalis',
     description: 'Social Media Feed'
   }
 ]
@@ -135,7 +135,7 @@ export function Feed() {
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-light text-white mb-4">Feed</h2>
+          <h2 className="text-5xl md:text-6xl font-light text-white mb-4">The Feed</h2>
           <p className="text-gray-400 text-lg">Curated content that builds connection, consistency, and engagement.</p>
         </div>
 
@@ -177,7 +177,7 @@ export function Feed() {
           <button
             onClick={prevFeed}
             disabled={isTransitioning}
-            className={`hidden lg:block absolute left-[-100px] top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-md rounded-full p-4 text-white transition-all duration-300 hover:bg-white/20 hover:scale-110 ${
+            className={`hidden lg:block absolute left-[-320px] top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-md rounded-full p-4 text-white transition-all duration-300 hover:bg-white/20 hover:scale-110 ${
               isTransitioning ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
             }`}
             aria-label="Previous feed"
@@ -190,7 +190,7 @@ export function Feed() {
           <button
             onClick={nextFeed}
             disabled={isTransitioning}
-            className={`hidden lg:block absolute right-[-100px] top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-md rounded-full p-4 text-white transition-all duration-300 hover:bg-white/20 hover:scale-110 ${
+            className={`hidden lg:block absolute right-[-320px] top-1/2 -translate-y-1/2 z-20 bg-white/10 backdrop-blur-md rounded-full p-4 text-white transition-all duration-300 hover:bg-white/20 hover:scale-110 ${
               isTransitioning ? 'opacity-30 cursor-not-allowed' : 'opacity-100'
             }`}
             aria-label="Next feed"

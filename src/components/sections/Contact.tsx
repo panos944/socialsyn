@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { socialLinks } from '@/lib/constants';
-import { MapPin, Mail, Phone } from 'lucide-react';
+import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react';
 
 export default function Contact() {
 
@@ -56,59 +56,84 @@ export default function Contact() {
               variants={containerVariants}
               className="space-y-12"
             >
-              <div className="space-y-8">
-                <motion.div variants={itemVariants} className="flex items-center justify-center">
-                  <div className="mr-4">
-                    <Mail className="text-primary" size={24} />
+              <div className="space-y-10">
+                <motion.div variants={itemVariants} className="space-y-2">
+                  <div className="flex items-center justify-center gap-3 text-neutral">
+                    <Mail className="h-5 w-5" />
+                    <h4 className="font-medium text-lg">Email</h4>
                   </div>
-                  <div>
-                    <h4 className="font-medium mb-1 text-lg">Email</h4>
-                    <a href="mailto:info.socialsyn@gmail.com" className="text-neutral-light text-base hover:text-primary transition-colors duration-300">
-                      info.socialsyn@gmail.com
-                    </a>
-                  </div>
+                  <a href="mailto:info.socialsyn@gmail.com" className="text-neutral-light text-base hover:text-primary transition-colors duration-300">
+                    info.socialsyn@gmail.com
+                  </a>
                 </motion.div>
-                
-                <motion.div variants={itemVariants} className="flex items-center justify-center">
-                  <div className="mr-4">
-                    <Phone className="text-primary" size={24} />
+
+                <motion.div variants={itemVariants} className="space-y-2">
+                  <div className="flex items-center justify-center gap-3 text-neutral">
+                    <Phone className="h-5 w-5" />
+                    <h4 className="font-medium text-lg">Phone</h4>
                   </div>
-                  <div>
-                    <h4 className="font-medium mb-1 text-lg">Phone</h4>
-                    <a href="tel:+306942491993" className="text-neutral-light text-base hover:text-primary transition-colors duration-300">
-                      +30 6942491993
-                    </a>
-                  </div>
+                  <a href="tel:+306942491993" className="text-neutral-light text-base hover:text-primary transition-colors duration-300">
+                    +30 6942491993
+                  </a>
                 </motion.div>
-                
-                <motion.div variants={itemVariants} className="flex items-center justify-center">
-                  <div className="mr-4">
-                    <MapPin className="text-primary" size={24} />
+
+                <motion.div variants={itemVariants} className="space-y-2">
+                  <div className="flex items-center justify-center gap-3 text-neutral">
+                    <MapPin className="h-5 w-5" />
+                    <h4 className="font-medium text-lg">Location</h4>
                   </div>
-                  <div>
-                    <h4 className="font-medium mb-1 text-lg">Location</h4>
-                    <p className="text-neutral-light text-base">
-                      Ag. Trifonos 9, Kifisia<br />
-                      Athens, Greece<br />
-                      14561
-                    </p>
-                  </div>
+                  <p className="text-neutral-light text-base leading-relaxed">
+                    Ag. Trifonos 9, Kifisia<br />
+                    Athens, Greece<br />
+                    14561
+                  </p>
                 </motion.div>
               </div>
               
-              <motion.div variants={itemVariants} className="pt-8">
-                <h4 className="text-sm uppercase tracking-wider mb-6 font-medium">Follow Us</h4>
-                <div className="flex justify-center space-x-8">
-                  {socialLinks.map(link => (
-                    <a 
-                      key={link.id}
-                      href={link.url} 
-                      className="text-neutral hover:text-primary transition-colors duration-300 text-2xl"
-                      aria-label={`Connect with us on ${link.icon}`}
-                    >
-                      <i className={`fab fa-${link.icon}`}></i>
-                    </a>
-                  ))}
+              <motion.div variants={itemVariants} className="pt-12 space-y-6">
+                <div className="w-full max-w-xl mx-auto text-center">
+                  <h4 className="text-sm uppercase tracking-[0.35em] mb-5 font-medium text-neutral">
+                    Follow Us
+                  </h4>
+                  <div className="flex justify-center space-x-8 text-2xl text-neutral">
+                    {socialLinks.map(link => (
+                      <a
+                        key={link.id}
+                        href={link.url}
+                        className="transition-colors duration-300 hover:text-primary"
+                        aria-label={`Connect with us on ${link.icon}`}
+                      >
+                        <i className={`fab fa-${link.icon}`}></i>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                  <a
+                    href="https://www.instagram.com/socialsyn_/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 rounded-full border border-neutral/20 px-6 py-3 text-xs tracking-[0.35em] uppercase text-neutral transition-colors duration-300 bg-white shadow-sm hover:shadow-md"
+                    style={{
+                      background: 'linear-gradient(135deg, #f58529 0%, #f77737 20%, #d62976 60%, #962fbf 80%, #4f5bd5 100%)',
+                      color: '#ffffff',
+                      borderColor: 'rgba(255,255,255,0.2)'
+                    }}
+                  >
+                    <Instagram className="h-4 w-4" strokeWidth={1.7} />
+                    Instagram
+                  </a>
+                  <a
+                    href="https://www.facebook.com/socialsyn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 rounded-full border border-neutral/20 px-6 py-3 text-xs tracking-[0.35em] uppercase text-neutral transition-colors duration-300 bg-[#1877F2] text-white shadow-sm hover:shadow-md"
+                    style={{ borderColor: 'rgba(255,255,255,0.18)' }}
+                  >
+                    <Facebook className="h-4 w-4" strokeWidth={1.7} />
+                    Facebook
+                  </a>
                 </div>
               </motion.div>
             </motion.div>

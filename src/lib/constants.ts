@@ -3,14 +3,14 @@ export const services = [
   {
     id: 1,
     title: "Brand Strategy & Digital Marketing",
-    description: "Strategic direction that combines creativity with performance. We develop campaigns, advertising concepts, and digital initiatives that build visibility and measurable growth.",
+    description: "We build strategies and campaigns that connect creativity with performance, driving visibility and measurable growth.",
     image: "/images/DOMAINE HATZIMICHALIS/SUNSET XORA 6.JPG",
     features: ["SEO Optimization", "PPC Advertising", "Content Marketing"],
   },
   {
     id: 2,
     title: "Social Media Management",
-    description: "We create and manage your social presence, curating the feed, writing captions, handling community management, and optimizing Meta Ads.",
+    description: "We manage your brand’s presence, curate the feed, write captions, engage with your audience, and optimize Meta Ads.",
     image: "/images/LEDOM/IMG_9580.jpg",
     instagramGrid: true,
     feedImage: "public/images/LEDOM/IMG_9580.jpg",
@@ -19,14 +19,14 @@ export const services = [
   {
     id: 3,
     title: "Photography",
-    description: "We produce photoshoots that capture your brand’s identity and communicate its story with clarity and intent.",
+    description: "We produce photoshoots that capture your brand’s identity and tell its story through cohesive imagery.",
     image: "/images/LUISANT/IMG_8203.JPG",
     features: ["Product Photography", "Brand Storytelling", "Corporate Headshots"],
   },
   {
     id: 4,
     title: "Content & Design Studio",
-    description: "We create branded visuals, newsletters, and digital assets that express your identity with consistency, emotion, and purpose.",
+    description: "We create visuals, newsletters, and digital assets that reflect your identity with clarity and emotion.",
     image: "/images-used/GRAPHICS/nulicious desk work-01 2.JPG",
     features: ["Brand Identity", "Social Media Graphics", "Print & Digital Materials"],
   },
@@ -205,9 +205,9 @@ export const socialLinks = [
 export const serviceLinks = [
   { id: 1, name: "Digital Marketing", url: "#" },
   { id: 2, name: "Social Media Management", url: "#" },
-  { id: 3, name: "Photography", url: "#" },
-  { id: 4, name: "Graphic Design", url: "#" },
-  // { id: 5, name: "SEO Optimization", url: "#" },
+  { id: 3, name: "Email Marketing", url: "#" },
+  { id: 4, name: "Photography", url: "#" },
+  { id: 5, name: "Graphic Design", url: "#" },
   { id: 6, name: "Content Creation", url: "#" },
 ];
 
@@ -222,8 +222,4 @@ export const quickLinks = [
 ];
 
 // Footer links
-export const footerLinks = [
-  { id: 1, name: "Privacy Policy", url: "#" },
-  { id: 2, name: "Terms of Service", url: "#" },
-  { id: 3, name: "Cookie Policy", url: "#" },
-];
+export const footerLinks: never[] = [];

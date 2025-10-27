@@ -11,8 +11,7 @@ import Hero from '@/components/sections/Hero';
 import Services from '@/components/sections/Services';
 import About from '@/components/sections/About';
 import Image from 'next/image';
-import CTA from '@/components/sections/CTA';
-import Contact from '@/components/sections/Contact';
+import ContactBlock from '@/components/sections/Contact';
 import { Feed } from '@/components/sections/Feed';
 import { SimplePhotographySection } from '@/components/three/SimplePhotographySection';
 
@@ -94,13 +93,10 @@ export default function Home() {
             </div>
           </section>
           
-          {/* CTA Section */}
-          <section className="bg-white relative z-20">
-            <CTA />
-          </section>
-
           {/* Contact Section */}
-          <Contact />
+          <section className="bg-white relative z-20">
+            <ContactBlock />
+          </section>
           
         </div>
         

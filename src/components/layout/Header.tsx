@@ -93,16 +93,15 @@ export default function Header() {
               className={`lg:hidden ${isScrolled ? 'text-primary' : 'text-white'}`}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
-              {isMenuOpen ? (
-                <X className="h-6 w-6" />
-              ) : (
-                <Menu className="h-6 w-6" />
-              )}
+              <Menu className="h-6 w-6" />
               <span className="sr-only">Toggle menu</span>
             </Button>
           </SheetTrigger>
           <SheetContent className="bg-white text-neutral">
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-between items-center mt-4">
+              <div className="flex-1 text-center text-base tracking-[0.3em] uppercase text-neutral">
+                SocialSyn
+              </div>
               <Button 
                 variant="ghost" 
                 size="icon" 
@@ -112,7 +111,7 @@ export default function Header() {
                 <X className="h-6 w-6" />
               </Button>
             </div>
-            <nav className="flex flex-col space-y-8 mt-16">
+            <nav className="flex flex-col items-center space-y-8 mt-16 text-center">
               {navLinks.map((link) => (
                 <a
                   key={link.name}
@@ -123,12 +122,6 @@ export default function Header() {
                   {link.name}
                 </a>
               ))}
-              <a 
-                href="tel:+1234567890" 
-                className="pt-8 text-sm uppercase tracking-wider text-neutral-light"
-              >
-                +1 (234) 567-890
-              </a>
             </nav>
           </SheetContent>
         </Sheet>

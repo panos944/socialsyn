@@ -8,7 +8,8 @@ export default function Hero() {
   const [loaderDone, setLoaderDone] = useState(false);
   const [revealIndex, setRevealIndex] = useState(-1); // -1 means not started
   const [isAnimatingStep, setIsAnimatingStep] = useState(false);
-  const words = ['Grow', 'Bold.', 'BR', 'Stand', 'Out.'];
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const words = ['We', 'Synthesize', 'Presence.'];
   const ctaVisible = revealIndex >= words.length - 1; // CTA appears as soon as last word is revealed
   const isBlockingScroll = loaderDone && !ctaVisible; // block until CTA visible
   const ready = loaderDone && revealIndex >= 0; // subtitle shows after first step
@@ -17,6 +18,16 @@ export default function Hero() {
   void videoRef;
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 150]);
+  useEffect(() => {
+    const unsubscribe = scrollY.on('change', (latest) => {
+      if (!hasScrolled && latest > 16) {
+        setHasScrolled(true);
+      }
+    });
+    return () => {
+      unsubscribe?.();
+    };
+  }, [hasScrolled, scrollY]);
   // Listen for initial loader completion to reveal hero copy
   // When the initial loader finishes, allow the hero to listen for scroll to start the reveal
   useEffect(() => {
@@ -180,12 +191,12 @@ export default function Hero() {
               initial={false}
               animate={ctaVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
               transition={{ duration: 0.7, delay: 0.1, ease: [0.6, -0.05, 0.01, 0.99] }}
-              className="md:flex items-center justify-start space-y-6 md:space-y-0 md:space-x-12 mt-12"
+                className="md:flex items-center justify-start space-y-4 md:space-y-0 md:space-x-8 mt-8"
             >
               <motion.a 
                 href="#services" 
                 onClick={(e) => scrollToSection(e, "#services")}
-                className="group relative inline-block px-6 py-3 rounded-full bg-white text-black font-medium text-sm tracking-wider uppercase shadow-md hover:shadow-lg transition-all duration-300"
+                className="group relative inline-block px-4 py-2 rounded-full bg-white text-black font-medium text-[0.7rem] tracking-[0.22em] uppercase shadow-md hover:shadow-lg transition-all duration-300"
                 whileHover={{ scale: 1.06 }}
                 whileTap={{ scale: 0.96 }}
                 transition={{ duration: 0.15 }}
@@ -198,17 +209,17 @@ export default function Hero() {
               <motion.a 
                 href="#contact" 
                 onClick={(e) => scrollToSection(e, "#contact")}
-                className="flex items-center group text-white"
+                className="flex items-center group text-white text-[0.75rem]"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className="w-12 h-12 border-2 border-white rounded-full flex items-center justify-center mr-4 group-hover:bg-white group-hover:text-black transition-all duration-300">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <div className="w-9 h-9 border border-white rounded-full flex items-center justify-center mr-3 group-hover:bg-white group-hover:text-black transition-all duration-300">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="m9 18 6-6-6-6"/>
                   </svg>
                 </div>
-                <span className="text-base md:text-lg font-medium uppercase tracking-wider">Start a Project</span>
+                <span className="text-[0.65rem] md:text-[0.7rem] font-medium uppercase tracking-[0.28em]">Start a Project</span>
               </motion.a>
             </motion.div>
           </div>
@@ -218,13 +229,16 @@ export default function Hero() {
       <motion.a
         href="#services"
         onClick={(e) => scrollToSection(e, "#services")}
-        className={`absolute bottom-6 inset-x-0 z-10 flex flex-col items-center text-center text-white/80 hover:text-white transition-colors ${ctaVisible ? '' : 'pointer-events-none'}`}
+        className="absolute bottom-6 inset-x-0 z-10 flex flex-col items-center text-center text-white drop-shadow-lg"
+        style={{ pointerEvents: hasScrolled ? 'none' : 'auto' }}
         initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ opacity: hasScrolled ? 0 : 1, y: hasScrolled ? 12 : 0 }}
         transition={{ duration: 0.6, delay: 0, ease: [0.6, -0.05, 0.01, 0.99] }}
         aria-label="Scroll to discover"
       >
-        <span className="text-xs md:text-sm uppercase tracking-[0.2em] mb-2">Scroll to discover</span>
+        <span className="text-xs md:text-sm uppercase tracking-[0.24em] mb-2 bg-black/40 px-4 py-1 rounded-full border border-white/40">
+          Scroll to discover
+        </span>
         <motion.span
           initial={false}
           animate={{ y: [0, 6, 0] }}

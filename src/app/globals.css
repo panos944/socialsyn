@@ -4,6 +4,12 @@
 @import 'tailwindcss/utilities';
 
 :root {
+  --pink: 343 42% 79%;
+  --pink-dark: 343 42% 64%;
+  --pink-foreground: 343 22% 20%;
+  --pink-light: 343 38% 86%;
+  --pink-lighter: 343 34% 90%;
+
   --background: 33 33% 98%;
   --foreground: 20 14.3% 4.1%;
   --muted: 33 10% 95%;
@@ -14,13 +20,13 @@
   --card-foreground: 20 14.3% 4.1%;
   --border: 20 5.9% 90%;
   --input: 20 5.9% 90%;
-  --primary: 345 35% 55%;
-  --primary-dark: 345 35% 45%;
-  --primary-foreground: 350 40% 96%;
-  --secondary: 54 20% 90%;
-  --secondary-foreground: 345 35% 55%;
-  --accent: 340 40% 80%;
-  --accent-foreground: 345 35% 45%;
+  --primary: var(--pink);
+  --primary-dark: var(--pink-dark);
+  --primary-foreground: var(--pink-foreground);
+  --secondary: var(--pink-light);
+  --secondary-foreground: var(--pink-foreground);
+  --accent: var(--pink-lighter);
+  --accent-foreground: var(--pink-foreground);
   --destructive: 0 84.2% 60.2%;
   --destructive-foreground: 60 9.1% 97.8%;
   --ring: 20 14.3% 4.1%;
