@@ -59,7 +59,7 @@ export function SimplePhotographySection() {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-5xl md:text-6xl font-light text-white mb-4">Photography</h2>
-          <p className="text-gray-400 text-lg">Capturing moments that define brands</p>
+          <p className="text-gray-400 text-lg">Capturing moments that define brands.</p>
         </div>
 
         {/* Main Photo Display */}

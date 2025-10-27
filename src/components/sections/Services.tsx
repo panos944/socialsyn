@@ -41,7 +41,7 @@ export default function Services() {
             Creative solutions for ambitious brands
           </h2>
           <p className="text-base" style={{ color: 'hsl(var(--neutral-light))' }}>
-            At <b className="text-primary">SocialSyn</b> we elevate brands through strategic digital experiences.
+            At <b className="text-primary">Socialsyn</b> we elevate brands through strategic digital experiences.
           </p>
         </motion.div>
 

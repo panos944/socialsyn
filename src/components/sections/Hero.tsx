@@ -7,17 +7,18 @@ export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [loaderDone, setLoaderDone] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState(false);
   const [showPlayPrompt, setShowPlayPrompt] = useState(false);
   const words = ['We', 'Synthesize', 'Presence.'];
   const ready = loaderDone; // Show content after loader is done
   
-  // Show play prompt after 2 seconds if video isn't playing
+  // Show play prompt after 1 second if video isn't playing
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!videoPlaying && videoRef.current && videoRef.current.paused) {
         setShowPlayPrompt(true);
       }
-    }, 2000);
+    }, 1000);
     
     return () => clearTimeout(timer);
   }, [videoPlaying]);
@@ -41,6 +42,8 @@ export default function Hero() {
         playPromise
           .then(() => {
             setVideoPlaying(true);
+            setVideoLoaded(true);
+            setShowPlayPrompt(false);
           })
           .catch((error) => {
             console.log('Video autoplay prevented:', error);
@@ -62,19 +65,34 @@ export default function Hero() {
         attemptPlay();
       }
       
-      const onLoadedData = () => attemptPlay();
+      const onLoadedData = () => {
+        setVideoLoaded(true);
+        attemptPlay();
+      };
       const onCanPlay = () => attemptPlay();
-      const onLoadedMetadata = () => attemptPlay();
+      const onLoadedMetadata = () => {
+        setVideoLoaded(true);
+        attemptPlay();
+      };
+      const onEnded = () => {
+        // Fallback: ensure video loops even if loop attribute fails
+        if (video) {
+          video.currentTime = 0;
+          video.play().catch(() => {});
+        }
+      };
       
       video.addEventListener('loadeddata', onLoadedData);
       video.addEventListener('canplay', onCanPlay);
       video.addEventListener('loadedmetadata', onLoadedMetadata);
+      video.addEventListener('ended', onEnded);
       
       // Cleanup
       const cleanup = () => {
         video.removeEventListener('loadeddata', onLoadedData);
         video.removeEventListener('canplay', onCanPlay);
         video.removeEventListener('loadedmetadata', onLoadedMetadata);
+        video.removeEventListener('ended', onEnded);
       };
       
       // Visibility change handler
@@ -142,6 +160,7 @@ export default function Hero() {
       video.muted = true;
       video.play().then(() => {
         setVideoPlaying(true);
+        setVideoLoaded(true);
         setShowPlayPrompt(false);
       }).catch(() => {});
     }
@@ -179,7 +198,7 @@ export default function Hero() {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
           poster="/media/hero-video-poster.jpg"
           controls={false}
           controlsList="nodownload noplaybackrate noremoteplayback noplay"
@@ -194,6 +213,8 @@ export default function Hero() {
             objectFit: 'cover',
             WebkitTouchCallout: 'none',
             pointerEvents: 'none',
+            opacity: videoLoaded ? 1 : 0.3,
+            transition: 'opacity 0.5s ease-in-out',
           }}
         >
           <source src="/media/hero-video-1080p.webm" type="video/webm" />

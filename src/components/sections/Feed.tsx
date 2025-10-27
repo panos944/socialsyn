@@ -45,70 +45,120 @@ export function Feed() {
   const containerRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const touchStartYRef = useRef<number | null>(null)
+  const velocityRef = useRef(0)
+  const lastTouchYRef = useRef<number | null>(null)
+  const lastTouchTimeRef = useRef<number>(0)
+  const animationFrameRef = useRef<number | null>(null)
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
-    const clampScroll = (delta: number) => {
-      if (delta === 0) return
-      setScrollPosition(prev => {
-        const next = prev + delta
-        if (next < 0) {
-          return 0
-        }
-        if (next > maxScroll) {
-          return maxScroll
-        }
-        return next
-      })
+    let currentScroll = scrollPosition
+
+    const updateScroll = (newScroll: number) => {
+      const clamped = Math.max(0, Math.min(newScroll, maxScroll))
+      currentScroll = clamped
+      setScrollPosition(clamped)
+    }
+
+    const momentum = () => {
+      if (Math.abs(velocityRef.current) > 0.1) {
+        currentScroll += velocityRef.current
+        updateScroll(currentScroll)
+        velocityRef.current *= 0.95 // Deceleration
+        animationFrameRef.current = requestAnimationFrame(momentum)
+      } else {
+        velocityRef.current = 0
+      }
     }
 
     const handleWheelEvent = (e: WheelEvent) => {
       if (maxScroll <= 0) return
       e.preventDefault()
       e.stopPropagation()
-      const delta = e.deltaY
-      const scrollSpeed = 0.5 // Smooth scrolling
-      clampScroll(delta * scrollSpeed)
+      
+      // Cancel any ongoing momentum
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+        animationFrameRef.current = null
+      }
+      velocityRef.current = 0
+      
+      const delta = e.deltaY * 0.5
+      currentScroll += delta
+      updateScroll(currentScroll)
     }
 
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length !== 1) return
+      
+      // Stop momentum
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+        animationFrameRef.current = null
+      }
+      velocityRef.current = 0
+      
       touchStartYRef.current = e.touches[0].clientY
+      lastTouchYRef.current = e.touches[0].clientY
+      lastTouchTimeRef.current = Date.now()
     }
 
     const handleTouchMove = (e: TouchEvent) => {
       if (maxScroll <= 0) return
-      if (touchStartYRef.current === null) return
+      if (touchStartYRef.current === null || lastTouchYRef.current === null) return
+      
       const currentY = e.touches[0]?.clientY
       if (currentY == null) return
-      const delta = touchStartYRef.current - currentY
-      if (Math.abs(delta) < 1) return
+      
+      const delta = lastTouchYRef.current - currentY
+      if (Math.abs(delta) < 0.5) return
+      
       e.preventDefault()
       e.stopPropagation()
-      clampScroll(delta * 0.5) // Smooth touch scrolling
-      touchStartYRef.current = currentY
+      
+      // Calculate velocity for momentum
+      const now = Date.now()
+      const timeDelta = now - lastTouchTimeRef.current
+      if (timeDelta > 0) {
+        velocityRef.current = delta / timeDelta * 16 // Normalize to 60fps
+      }
+      
+      currentScroll += delta
+      updateScroll(currentScroll)
+      
+      lastTouchYRef.current = currentY
+      lastTouchTimeRef.current = now
     }
 
     const handleTouchEnd = () => {
       touchStartYRef.current = null
+      lastTouchYRef.current = null
+      
+      // Start momentum scrolling
+      if (Math.abs(velocityRef.current) > 0.5) {
+        animationFrameRef.current = requestAnimationFrame(momentum)
+      }
     }
 
     container.addEventListener('wheel', handleWheelEvent, { passive: false })
     container.addEventListener('touchstart', handleTouchStart, { passive: false })
     container.addEventListener('touchmove', handleTouchMove, { passive: false })
-    container.addEventListener('touchend', handleTouchEnd)
-    container.addEventListener('touchcancel', handleTouchEnd)
+    container.addEventListener('touchend', handleTouchEnd, { passive: true })
+    container.addEventListener('touchcancel', handleTouchEnd, { passive: true })
 
     return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
       container.removeEventListener('wheel', handleWheelEvent)
       container.removeEventListener('touchstart', handleTouchStart)
       container.removeEventListener('touchmove', handleTouchMove)
       container.removeEventListener('touchend', handleTouchEnd)
       container.removeEventListener('touchcancel', handleTouchEnd)
     }
-  }, [maxScroll])
+  }, [maxScroll, scrollPosition])
 
   useEffect(() => {
     const container = containerRef.current
@@ -278,12 +328,13 @@ export function Feed() {
           >
             {/* Auto-Scrollable Image - Full width, fits side to side */}
             <div 
-              className={`absolute left-0 right-0 w-full transition-all duration-100 ease-out ${
-                isTransitioning ? 'opacity-0' : 'opacity-100'
+              className={`absolute left-0 right-0 w-full ${
+                isTransitioning ? 'opacity-0 transition-opacity duration-600' : 'opacity-100'
               }`}
               style={{
-                top: `-${scrollPosition}px`,
-                height: 'auto'
+                transform: `translateY(-${scrollPosition}px)`,
+                height: 'auto',
+                willChange: 'transform'
               }}
             >
               <Image
