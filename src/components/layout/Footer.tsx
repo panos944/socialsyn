@@ -19,7 +19,7 @@ export default function Footer() {
               <h4 className="serif-heading text-4xl mb-6 tracking-[0.04em] text-white">
                 Socialsyn
               </h4>
-              <p className="mb-6 opacity-95 text-lg tracking-[0.018em] leading-relaxed text-white/95">
+              <p className="mb-6 opacity-95 text-sm md:text-lg tracking-[0.018em] leading-relaxed text-white/95">
                 Strategic digital marketing solutions that elevate your brand and drive measurable results for your business.
               </p>
               <div className="flex space-x-6">
@@ -39,7 +39,7 @@ export default function Footer() {
             {/* Contact Info */}
             <div className="md:col-span-3 mb-8 md:mb-0">
               <h5 className="text-[0.7rem] uppercase tracking-[0.32em] mb-5 text-white/75">Contact</h5>
-              <div className="space-y-3 text-lg tracking-[0.012em] text-white/95">
+              <div className="space-y-3 text-sm md:text-lg tracking-[0.012em] text-white/95">
                 <p className="leading-relaxed">Ag. Trifonos 9 <br />Kifisia, Athens, 14562</p>
                 <p>info.socialsyn@gmail.com</p>
                 <p>+30 6942491993</p>
@@ -49,7 +49,7 @@ export default function Footer() {
             {/* Links */}
             <div className="md:col-span-2 mb-8 md:mb-0">
               <h5 className="text-[0.7rem] uppercase tracking-[0.32em] mb-5 text-white/75">Services</h5>
-              <ul className="space-y-3 text-lg tracking-[0.012em] text-white/95">
+              <ul className="space-y-3 text-sm md:text-lg tracking-[0.012em] text-white/95">
                 {serviceLinks.map((link) => (
                   <li key={link.id}>
                     <a
@@ -65,7 +65,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-center text-base text-white/90 tracking-[0.02em]">
+        <div className="flex flex-col md:flex-row justify-between items-center text-xs md:text-base text-white/90 tracking-[0.02em]">
           <p>
             &copy; {currentYear || 2024} Socialsyn. All rights reserved.
           </p>

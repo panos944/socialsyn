@@ -45,12 +45,22 @@ export default function Hero() {
     const onLoadedData = () => attemptPlay();
     const onCanPlay = () => attemptPlay();
     const onVisibility = () => attemptPlay();
+    
+    // Mobile: attempt to play on any user interaction
+    const onUserInteraction = () => {
+      attemptPlay();
+      // Remove listeners after first interaction
+      document.removeEventListener('touchstart', onUserInteraction);
+      document.removeEventListener('click', onUserInteraction);
+    };
 
     if (video) {
       video.addEventListener('loadeddata', onLoadedData);
       video.addEventListener('canplay', onCanPlay);
     }
     document.addEventListener('visibilitychange', onVisibility);
+    document.addEventListener('touchstart', onUserInteraction, { passive: true, once: true });
+    document.addEventListener('click', onUserInteraction, { passive: true, once: true });
 
     return () => {
       if (video) {
@@ -58,6 +68,8 @@ export default function Hero() {
         video.removeEventListener('canplay', onCanPlay);
       }
       document.removeEventListener('visibilitychange', onVisibility);
+      document.removeEventListener('touchstart', onUserInteraction);
+      document.removeEventListener('click', onUserInteraction);
     };
   }, []);
   const { scrollY } = useScroll();
@@ -191,6 +203,14 @@ export default function Hero() {
             height: '110%',
             objectFit: 'cover',
             WebkitTouchCallout: 'none',
+            pointerEvents: 'none',
+          }}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (videoRef.current) {
+              videoRef.current.play().catch(() => {});
+            }
           }}
         >
           <source src="/media/hero-video-1080p.webm" type="video/webm" />

@@ -274,7 +274,7 @@ export function Feed() {
           <div 
             ref={containerRef}
             className="relative aspect-[3/5] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:shadow-3xl"
-            style={{ touchAction: maxScroll > 0 ? 'manipulation' : 'auto' }}
+            style={{ touchAction: maxScroll > 0 ? 'none' : 'auto' }}
           >
             {/* Auto-Scrollable Image - Full width, fits side to side */}
             <div 
