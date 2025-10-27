@@ -50,18 +50,30 @@ export function Feed() {
     const container = containerRef.current
     if (!container) return
 
+    let rafId: number | null = null
+    let targetScroll = scrollPosition
+
+    const smoothUpdate = () => {
+      setScrollPosition(prev => {
+        const diff = targetScroll - prev
+        if (Math.abs(diff) < 0.5) {
+          return targetScroll
+        }
+        return prev + diff * 0.15 // Smooth easing factor
+      })
+      rafId = requestAnimationFrame(smoothUpdate)
+    }
+
     const clampScroll = (delta: number) => {
       if (delta === 0) return
-      setScrollPosition(prev => {
-        const next = prev + delta
-        if (next < 0) {
-          return 0
-        }
-        if (next > maxScroll) {
-          return maxScroll
-        }
-        return next
-      })
+      const next = targetScroll + delta
+      if (next < 0) {
+        targetScroll = 0
+      } else if (next > maxScroll) {
+        targetScroll = maxScroll
+      } else {
+        targetScroll = next
+      }
     }
 
     const handleWheelEvent = (e: WheelEvent) => {
@@ -69,13 +81,17 @@ export function Feed() {
       e.preventDefault()
       e.stopPropagation()
       const delta = e.deltaY
-      const scrollSpeed = 1
+      const scrollSpeed = 0.8 // Slightly slower for smoother feel
       clampScroll(delta * scrollSpeed)
     }
 
     const handleTouchStart = (e: TouchEvent) => {
       if (e.touches.length !== 1) return
       touchStartYRef.current = e.touches[0].clientY
+      // Cancel any ongoing animation
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId)
+      }
     }
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -87,7 +103,7 @@ export function Feed() {
       if (Math.abs(delta) < 1) return
       e.preventDefault()
       e.stopPropagation()
-      clampScroll(delta)
+      clampScroll(delta * 0.6) // Smooth touch scrolling
       touchStartYRef.current = currentY
     }
 
@@ -101,14 +117,20 @@ export function Feed() {
     container.addEventListener('touchend', handleTouchEnd)
     container.addEventListener('touchcancel', handleTouchEnd)
 
+    // Start smooth animation loop
+    rafId = requestAnimationFrame(smoothUpdate)
+
     return () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId)
+      }
       container.removeEventListener('wheel', handleWheelEvent)
       container.removeEventListener('touchstart', handleTouchStart)
       container.removeEventListener('touchmove', handleTouchMove)
       container.removeEventListener('touchend', handleTouchEnd)
       container.removeEventListener('touchcancel', handleTouchEnd)
     }
-  }, [maxScroll])
+  }, [maxScroll, scrollPosition])
 
   useEffect(() => {
     const container = containerRef.current

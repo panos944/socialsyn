@@ -9,69 +9,108 @@ export default function Hero() {
   const [revealIndex, setRevealIndex] = useState(-1); // -1 means not started
   const [isAnimatingStep, setIsAnimatingStep] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
+  const [showPlayPrompt, setShowPlayPrompt] = useState(false);
   const words = ['We', 'Synthesize', 'Presence.'];
   const ctaVisible = revealIndex >= words.length - 1; // CTA appears as soon as last word is revealed
   const isBlockingScroll = loaderDone && !ctaVisible; // block until CTA visible
   const ready = loaderDone && revealIndex >= 0; // subtitle shows after first step
   
+  // Show play prompt after 2 seconds if video isn't playing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!videoPlaying && videoRef.current && videoRef.current.paused) {
+        setShowPlayPrompt(true);
+      }
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, [videoPlaying]);
+  
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    
     const ensurePlayback = () => {
       const video = videoRef.current;
       if (!video) return;
+      if (videoPlaying) return; // Already playing
+      
       video.setAttribute('muted', '');
       video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
       video.muted = true;
+      video.defaultMuted = true;
+      
       const playPromise = video.play();
-      if (playPromise?.catch) {
-        playPromise.catch(() => {
-          // Autoplay might still be blocked until user interaction; nothing else to do here.
-        });
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setVideoPlaying(true);
+          })
+          .catch((error) => {
+            console.log('Video autoplay prevented:', error);
+          });
       }
     };
 
     const video = videoRef.current;
     const attemptPlay = () => {
       const video = videoRef.current;
-      if (!video) return;
+      if (!video || videoPlaying) return;
       if (document.visibilityState !== 'visible') return;
       ensurePlayback();
     };
 
-    if (video && video.readyState >= 2) {
-      attemptPlay();
-    }
-
-    const onLoadedData = () => attemptPlay();
-    const onCanPlay = () => attemptPlay();
-    const onVisibility = () => attemptPlay();
-    
-    // Mobile: attempt to play on any user interaction
-    const onUserInteraction = () => {
-      attemptPlay();
-      // Remove listeners after first interaction
-      document.removeEventListener('touchstart', onUserInteraction);
-      document.removeEventListener('click', onUserInteraction);
-    };
-
+    // Try to play immediately if video is ready
     if (video) {
+      if (video.readyState >= 2) {
+        attemptPlay();
+      }
+      
+      const onLoadedData = () => attemptPlay();
+      const onCanPlay = () => attemptPlay();
+      const onLoadedMetadata = () => attemptPlay();
+      
       video.addEventListener('loadeddata', onLoadedData);
       video.addEventListener('canplay', onCanPlay);
-    }
-    document.addEventListener('visibilitychange', onVisibility);
-    document.addEventListener('touchstart', onUserInteraction, { passive: true, once: true });
-    document.addEventListener('click', onUserInteraction, { passive: true, once: true });
-
-    return () => {
-      if (video) {
+      video.addEventListener('loadedmetadata', onLoadedMetadata);
+      
+      // Cleanup
+      const cleanup = () => {
         video.removeEventListener('loadeddata', onLoadedData);
         video.removeEventListener('canplay', onCanPlay);
-      }
-      document.removeEventListener('visibilitychange', onVisibility);
-      document.removeEventListener('touchstart', onUserInteraction);
-      document.removeEventListener('click', onUserInteraction);
-    };
-  }, []);
+        video.removeEventListener('loadedmetadata', onLoadedMetadata);
+      };
+      
+      // Visibility change handler
+      const onVisibility = () => {
+        if (document.visibilityState === 'visible') {
+          attemptPlay();
+        }
+      };
+      document.addEventListener('visibilitychange', onVisibility);
+      
+      // User interaction handlers for mobile browsers
+      const interactionEvents = ['touchstart', 'touchend', 'click', 'scroll'];
+      const onUserInteraction = () => {
+        if (!videoPlaying) {
+          ensurePlayback();
+        }
+      };
+      
+      interactionEvents.forEach(event => {
+        document.addEventListener(event, onUserInteraction, { passive: true, once: true });
+      });
+
+      return () => {
+        cleanup();
+        document.removeEventListener('visibilitychange', onVisibility);
+        interactionEvents.forEach(event => {
+          document.removeEventListener(event, onUserInteraction);
+        });
+      };
+    }
+  }, [videoPlaying]);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 150]);
   useEffect(() => {
@@ -177,10 +216,38 @@ export default function Hero() {
     }
   };
 
+  const handlePlayClick = () => {
+    const video = videoRef.current;
+    if (video) {
+      video.muted = true;
+      video.play().then(() => {
+        setVideoPlaying(true);
+        setShowPlayPrompt(false);
+      }).catch(() => {});
+    }
+  };
+
   return (
     <section id="home" className="video-container">
       {/* Subtle top-left gradient overlay for improved contrast */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/30 to-transparent z-[1] pointer-events-none"></div>
+      
+      {/* Tap to play overlay for mobile if video isn't autoplaying */}
+      {showPlayPrompt && !videoPlaying && (
+        <div 
+          className="absolute inset-0 z-[2] flex items-center justify-center bg-black/20 backdrop-blur-sm cursor-pointer"
+          onClick={handlePlayClick}
+        >
+          <div className="text-white text-center animate-pulse">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/40">
+              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </div>
+            <p className="text-sm uppercase tracking-wider">Tap to play</p>
+          </div>
+        </div>
+      )}
       
       <motion.div 
         className="absolute inset-0 w-full h-full z-0"
@@ -197,20 +264,17 @@ export default function Hero() {
           controls={false}
           controlsList="nodownload noplaybackrate noremoteplayback noplay"
           disablePictureInPicture
+          disableRemotePlayback
           className="hero-video"
+          // @ts-ignore - webkit-playsinline is not in React types but needed for iOS
+          webkit-playsinline="true"
+          x-webkit-airplay="deny"
           style={{
             width: '100%',
             height: '110%',
             objectFit: 'cover',
             WebkitTouchCallout: 'none',
             pointerEvents: 'none',
-          }}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (videoRef.current) {
-              videoRef.current.play().catch(() => {});
-            }
           }}
         >
           <source src="/media/hero-video-1080p.webm" type="video/webm" />

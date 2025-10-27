@@ -69,7 +69,7 @@ export default function Home() {
               {/* Mobile: compact brand logos image */}
               <div className="md:hidden absolute inset-0">
                 <Image
-                  src="/website-logos-small.jpg"
+                  src="/images-used/website-logos-small.jpg"
                   alt="Brand section logos"
                   fill
                   sizes="100vw"

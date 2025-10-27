@@ -134,21 +134,44 @@
 /* Hide video controls on all browsers */
 .hero-video::-webkit-media-controls {
   display: none !important;
+  opacity: 0 !important;
 }
 
 .hero-video::-webkit-media-controls-enclosure {
   display: none !important;
+  opacity: 0 !important;
 }
 
 .hero-video::-webkit-media-controls-panel {
   display: none !important;
+  opacity: 0 !important;
 }
 
 .hero-video::-webkit-media-controls-play-button {
   display: none !important;
+  opacity: 0 !important;
 }
 
 .hero-video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+.hero-video::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* Additional video control hiding for iOS */
+video.hero-video::cue {
+  display: none;
+}
+
+video.hero-video::-webkit-media-text-track-container {
+  display: none !important;
+}
+
+video.hero-video::-webkit-media-text-track-display {
   display: none !important;
 }
 
