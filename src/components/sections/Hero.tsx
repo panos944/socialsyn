@@ -266,7 +266,6 @@ export default function Hero() {
           disablePictureInPicture
           disableRemotePlayback
           className="hero-video"
-          // @ts-ignore - webkit-playsinline is not in React types but needed for iOS
           webkit-playsinline="true"
           x-webkit-airplay="deny"
           style={{
