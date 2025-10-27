@@ -6,15 +6,10 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 export default function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [loaderDone, setLoaderDone] = useState(false);
-  const [revealIndex, setRevealIndex] = useState(-1); // -1 means not started
-  const [isAnimatingStep, setIsAnimatingStep] = useState(false);
-  const [hasScrolled, setHasScrolled] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
   const [showPlayPrompt, setShowPlayPrompt] = useState(false);
   const words = ['We', 'Synthesize', 'Presence.'];
-  const ctaVisible = revealIndex >= words.length - 1; // CTA appears as soon as last word is revealed
-  const isBlockingScroll = loaderDone && !ctaVisible; // block until CTA visible
-  const ready = loaderDone && revealIndex >= 0; // subtitle shows after first step
+  const ready = loaderDone; // Show content after loader is done
   
   // Show play prompt after 2 seconds if video isn't playing
   useEffect(() => {
@@ -113,18 +108,8 @@ export default function Hero() {
   }, [videoPlaying]);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 150]);
-  useEffect(() => {
-    const unsubscribe = scrollY.on('change', (latest) => {
-      if (!hasScrolled && latest > 16) {
-        setHasScrolled(true);
-      }
-    });
-    return () => {
-      unsubscribe?.();
-    };
-  }, [hasScrolled, scrollY]);
+  
   // Listen for initial loader completion to reveal hero copy
-  // When the initial loader finishes, allow the hero to listen for scroll to start the reveal
   useEffect(() => {
     const onDone = () => setLoaderDone(true);
     if (typeof window !== 'undefined') {
@@ -138,71 +123,6 @@ export default function Hero() {
     }
     return () => {};
   }, []);
-
-  // Intercept scroll to step through the word reveals; block page scroll until CTA is visible
-  useEffect(() => {
-    if (!loaderDone) return;
-    const step = () => {
-      if (isAnimatingStep) return;
-      setIsAnimatingStep(true);
-      setRevealIndex((idx) => Math.min(idx + 1, words.length - 1));
-      window.setTimeout(() => setIsAnimatingStep(false), 450);
-    };
-    const onWheel = (e: WheelEvent) => {
-      if (!ctaVisible) {
-        e.preventDefault();
-        e.stopPropagation();
-        step();
-      }
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      if (!ctaVisible) {
-        e.preventDefault();
-        e.stopPropagation();
-        step();
-      }
-    };
-    const onKeyDown = (e: KeyboardEvent) => {
-      const keys = ['ArrowDown', 'PageDown', ' ', 'Spacebar'];
-      if (keys.includes(e.key)) {
-        if (!ctaVisible) {
-          e.preventDefault();
-          e.stopPropagation();
-          step();
-        }
-      }
-    };
-    window.addEventListener('wheel', onWheel, { passive: false });
-    window.addEventListener('touchmove', onTouchMove, { passive: false });
-    window.addEventListener('keydown', onKeyDown);
-    return () => {
-      window.removeEventListener('wheel', onWheel as EventListener);
-      window.removeEventListener('touchmove', onTouchMove as EventListener);
-      window.removeEventListener('keydown', onKeyDown as EventListener);
-    };
-  }, [loaderDone, isAnimatingStep, ctaVisible, words.length]);
-
-  // Also lock body scroll while blocking
-  useEffect(() => {
-    if (isBlockingScroll) {
-      const prev = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.body.style.overflow = prev;
-      };
-    }
-  }, [isBlockingScroll]);
-
-  // Ensure scroll is fully restored when CTA becomes visible
-  useEffect(() => {
-    if (ctaVisible) {
-      try {
-        document.body.style.overflow = '';
-        const htmlEl = document.documentElement;
-        if (htmlEl) htmlEl.style.overflow = '';
-      } catch {}
-    }
-  }, [ctaVisible]);
 
   // Function to scroll to a section
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
@@ -297,29 +217,15 @@ export default function Hero() {
               initial={false}
               animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 14 }}
               transition={{ duration: 0.9, delay: 0.2, ease: [0.6, -0.05, 0.01, 0.99] }}
-              className="serif-heading text-white text-5xl md:text-7xl lg:text-8xl mb-8 leading-tight flex flex-wrap gap-x-3"
+              className="serif-heading text-white text-5xl md:text-7xl lg:text-8xl mb-8 leading-tight"
             >
-              {words.map((w, i) => (
-                w === 'BR' ? (
-                  <span key={`br-${i}`} className="basis-full w-full h-0" />
-                ) : (
-                  <motion.span
-                    key={i}
-                    initial={false}
-                    animate={revealIndex >= i ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-                    transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-                    className="inline-block"
-                  >
-                    {w}
-                  </motion.span>
-                )
-              ))}
+              {words.join(' ')}
             </motion.h1>
             
             <motion.div 
               initial={false}
-              animate={ctaVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
-              transition={{ duration: 0.7, delay: 0.1, ease: [0.6, -0.05, 0.01, 0.99] }}
+              animate={ready ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+              transition={{ duration: 0.7, delay: 0.3, ease: [0.6, -0.05, 0.01, 0.99] }}
                 className="md:flex items-center justify-start space-y-4 md:space-y-0 md:space-x-8 mt-8"
             >
               <motion.a 
@@ -354,31 +260,6 @@ export default function Hero() {
           </div>
         </div>
       </div>
-      {/* Bottom-centered subtle scroll cue */}
-      <motion.a
-        href="#services"
-        onClick={(e) => scrollToSection(e, "#services")}
-        className="absolute bottom-6 inset-x-0 z-10 flex flex-col items-center text-center text-white drop-shadow-lg"
-        style={{ pointerEvents: hasScrolled ? 'none' : 'auto' }}
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: hasScrolled ? 0 : 1, y: hasScrolled ? 12 : 0 }}
-        transition={{ duration: 0.6, delay: 0, ease: [0.6, -0.05, 0.01, 0.99] }}
-        aria-label="Scroll to discover"
-      >
-        <span className="text-xs md:text-sm uppercase tracking-[0.24em] mb-2 bg-black/40 px-4 py-1 rounded-full border border-white/40">
-          Scroll to discover
-        </span>
-        <motion.span
-          initial={false}
-          animate={{ y: [0, 6, 0] }}
-          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-          className="inline-flex"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="m6 9 6 6 6-6" />
-          </svg>
-        </motion.span>
-      </motion.a>
     </section>
   );
 }
