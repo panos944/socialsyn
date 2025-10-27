@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 export default function Hero() {
-  const videoRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const [loaderDone, setLoaderDone] = useState(false);
   const [revealIndex, setRevealIndex] = useState(-1); // -1 means not started
   const [isAnimatingStep, setIsAnimatingStep] = useState(false);
@@ -14,8 +14,52 @@ export default function Hero() {
   const isBlockingScroll = loaderDone && !ctaVisible; // block until CTA visible
   const ready = loaderDone && revealIndex >= 0; // subtitle shows after first step
   
-  // Suppress unused variable warning - keeping ref for potential future use
-  void videoRef;
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const ensurePlayback = () => {
+      const video = videoRef.current;
+      if (!video) return;
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+      video.muted = true;
+      const playPromise = video.play();
+      if (playPromise?.catch) {
+        playPromise.catch(() => {
+          // Autoplay might still be blocked until user interaction; nothing else to do here.
+        });
+      }
+    };
+
+    const video = videoRef.current;
+    const attemptPlay = () => {
+      const video = videoRef.current;
+      if (!video) return;
+      if (document.visibilityState !== 'visible') return;
+      ensurePlayback();
+    };
+
+    if (video && video.readyState >= 2) {
+      attemptPlay();
+    }
+
+    const onLoadedData = () => attemptPlay();
+    const onCanPlay = () => attemptPlay();
+    const onVisibility = () => attemptPlay();
+
+    if (video) {
+      video.addEventListener('loadeddata', onLoadedData);
+      video.addEventListener('canplay', onCanPlay);
+    }
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      if (video) {
+        video.removeEventListener('loadeddata', onLoadedData);
+        video.removeEventListener('canplay', onCanPlay);
+      }
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 150]);
   useEffect(() => {
@@ -124,18 +168,19 @@ export default function Hero() {
   return (
     <section id="home" className="video-container">
       {/* Subtle top-left gradient overlay for improved contrast */}
-      <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/30 to-transparent z-[1]"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/30 to-transparent z-[1] pointer-events-none"></div>
       
       <motion.div 
         className="absolute inset-0 w-full h-full z-0"
         style={{ y }}
       >
         <video
+          ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           poster="/media/hero-video-poster.jpg"
           controls={false}
           controlsList="nodownload noplaybackrate noremoteplayback noplay"

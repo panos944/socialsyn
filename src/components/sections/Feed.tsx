@@ -44,27 +44,69 @@ export function Feed() {
   const [isTransitioning, setIsTransitioning] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
+  const touchStartYRef = useRef<number | null>(null)
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
 
+    const clampScroll = (delta: number) => {
+      if (delta === 0) return
+      setScrollPosition(prev => {
+        const next = prev + delta
+        if (next < 0) {
+          return 0
+        }
+        if (next > maxScroll) {
+          return maxScroll
+        }
+        return next
+      })
+    }
+
     const handleWheelEvent = (e: WheelEvent) => {
+      if (maxScroll <= 0) return
       e.preventDefault()
       e.stopPropagation()
       const delta = e.deltaY
       const scrollSpeed = 1
+      clampScroll(delta * scrollSpeed)
+    }
 
-      setScrollPosition(prev => {
-        const newPosition = prev + (delta * scrollSpeed)
-        return Math.max(0, Math.min(maxScroll, newPosition))
-      })
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length !== 1) return
+      touchStartYRef.current = e.touches[0].clientY
+    }
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (maxScroll <= 0) return
+      if (touchStartYRef.current === null) return
+      const currentY = e.touches[0]?.clientY
+      if (currentY == null) return
+      const delta = touchStartYRef.current - currentY
+      if (Math.abs(delta) < 1) return
+      e.preventDefault()
+      e.stopPropagation()
+      clampScroll(delta)
+      touchStartYRef.current = currentY
+    }
+
+    const handleTouchEnd = () => {
+      touchStartYRef.current = null
     }
 
     container.addEventListener('wheel', handleWheelEvent, { passive: false })
-    
+    container.addEventListener('touchstart', handleTouchStart, { passive: false })
+    container.addEventListener('touchmove', handleTouchMove, { passive: false })
+    container.addEventListener('touchend', handleTouchEnd)
+    container.addEventListener('touchcancel', handleTouchEnd)
+
     return () => {
       container.removeEventListener('wheel', handleWheelEvent)
+      container.removeEventListener('touchstart', handleTouchStart)
+      container.removeEventListener('touchmove', handleTouchMove)
+      container.removeEventListener('touchend', handleTouchEnd)
+      container.removeEventListener('touchcancel', handleTouchEnd)
     }
   }, [maxScroll])
 
@@ -232,6 +274,7 @@ export function Feed() {
           <div 
             ref={containerRef}
             className="relative aspect-[3/5] rounded-2xl overflow-hidden shadow-2xl transition-all duration-300 hover:shadow-3xl"
+            style={{ touchAction: maxScroll > 0 ? 'manipulation' : 'auto' }}
           >
             {/* Auto-Scrollable Image - Full width, fits side to side */}
             <div 
