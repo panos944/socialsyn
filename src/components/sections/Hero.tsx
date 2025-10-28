@@ -1,137 +1,27 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect, type MouseEvent } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
+const HERO_VIDEO_ID = 'yzka9ZCMT0s';
+const HERO_VIDEO_BASE = `https://www.youtube-nocookie.com/embed/${HERO_VIDEO_ID}?autoplay=1&mute=1&controls=0&showinfo=0&loop=1&playlist=${HERO_VIDEO_ID}&modestbranding=1&playsinline=1&rel=0&enablejsapi=1&cc_load_policy=0&fs=0&disablekb=1&iv_load_policy=3`;
+
 export default function Hero() {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [loaderDone, setLoaderDone] = useState(false);
-  const [videoPlaying, setVideoPlaying] = useState(false);
-  const [videoLoaded, setVideoLoaded] = useState(false);
-  const [showPlayPrompt, setShowPlayPrompt] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const [iframeVisible, setIframeVisible] = useState(false);
+  const [iframeSrc, setIframeSrc] = useState(HERO_VIDEO_BASE);
+  const [iframeDimensions, setIframeDimensions] = useState<{ width: string; height: string }>({ width: '110%', height: '110%' });
   const words = ['We', 'Synthesize', 'Presence.'];
   const ready = loaderDone; // Show content after loader is done
-  
-  // Show play prompt after 3 seconds if video isn't playing (give more time for autoplay)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!videoPlaying && videoRef.current && videoRef.current.paused) {
-        setShowPlayPrompt(true);
-      }
-    }, 3000);
-    
-    return () => clearTimeout(timer);
-  }, [videoPlaying]);
-  
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    
-    const ensurePlayback = () => {
-      const video = videoRef.current;
-      if (!video) return;
-      if (videoPlaying) return; // Already playing
-      
-      video.setAttribute('muted', '');
-      video.setAttribute('playsinline', '');
-      video.setAttribute('webkit-playsinline', '');
-      video.muted = true;
-      video.defaultMuted = true;
-      
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => {
-            setVideoPlaying(true);
-            setVideoLoaded(true);
-            setShowPlayPrompt(false);
-          })
-          .catch((error) => {
-            console.log('Video autoplay prevented:', error);
-          });
-      }
-    };
-
-    const video = videoRef.current;
-    const attemptPlay = () => {
-      const video = videoRef.current;
-      if (!video || videoPlaying) return;
-      if (document.visibilityState !== 'visible') return;
-      ensurePlayback();
-    };
-
-    // Try to play immediately if video is ready
-    if (video) {
-      if (video.readyState >= 2) {
-        attemptPlay();
-      }
-      
-      const onLoadedData = () => {
-        setVideoLoaded(true);
-        attemptPlay();
-      };
-      const onCanPlay = () => attemptPlay();
-      const onLoadedMetadata = () => {
-        setVideoLoaded(true);
-        attemptPlay();
-      };
-      const onEnded = () => {
-        // Fallback: ensure video loops even if loop attribute fails
-        if (video) {
-          video.currentTime = 0;
-          video.play().catch(() => {});
-        }
-      };
-      
-      video.addEventListener('loadeddata', onLoadedData);
-      video.addEventListener('canplay', onCanPlay);
-      video.addEventListener('loadedmetadata', onLoadedMetadata);
-      video.addEventListener('ended', onEnded);
-      
-      // Cleanup
-      const cleanup = () => {
-        video.removeEventListener('loadeddata', onLoadedData);
-        video.removeEventListener('canplay', onCanPlay);
-        video.removeEventListener('loadedmetadata', onLoadedMetadata);
-        video.removeEventListener('ended', onEnded);
-      };
-      
-      // Visibility change handler
-      const onVisibility = () => {
-        if (document.visibilityState === 'visible') {
-          attemptPlay();
-        }
-      };
-      document.addEventListener('visibilitychange', onVisibility);
-      
-      // User interaction handlers for mobile browsers - more aggressive
-      const interactionEvents = ['touchstart', 'touchend', 'click', 'scroll', 'touchmove'];
-      const onUserInteraction = () => {
-        if (!videoPlaying) {
-          ensurePlayback();
-        }
-      };
-      
-      // Try multiple times with different events
-      interactionEvents.forEach(event => {
-        window.addEventListener(event, onUserInteraction, { passive: true, once: true });
-      });
-
-      return () => {
-        cleanup();
-        document.removeEventListener('visibilitychange', onVisibility);
-        interactionEvents.forEach(event => {
-          window.removeEventListener(event, onUserInteraction);
-        });
-      };
-    }
-  }, [videoPlaying]);
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, 150]);
-  
+
   // Listen for initial loader completion to reveal hero copy
   useEffect(() => {
     const onDone = () => setLoaderDone(true);
     if (typeof window !== 'undefined') {
+      setIframeSrc(`${HERO_VIDEO_BASE}&origin=${encodeURIComponent(window.location.origin)}`);
       window.addEventListener('initial-loader:done', onDone);
       // Fallback: if no loader event (e.g., cached session), enable immediately after a short delay
       const fallback = window.setTimeout(() => setLoaderDone(true), 500);
@@ -144,7 +34,7 @@ export default function Hero() {
   }, []);
 
   // Function to scroll to a section
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+  const scrollToSection = (e: MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     e.preventDefault();
     const section = document.querySelector(sectionId);
     if (section) {
@@ -155,73 +45,79 @@ export default function Hero() {
     }
   };
 
-  const handlePlayClick = () => {
-    const video = videoRef.current;
-    if (video) {
-      video.muted = true;
-      video.play().then(() => {
-        setVideoPlaying(true);
-        setVideoLoaded(true);
-        setShowPlayPrompt(false);
-      }).catch(() => {});
-    }
-  };
+  useEffect(() => {
+    if (!iframeLoaded) return;
+    const timeout = window.setTimeout(() => setIframeVisible(true), 600);
+    return () => window.clearTimeout(timeout);
+  }, [iframeLoaded]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const updateDimensions = () => {
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const videoRatio = 16 / 9;
+      const containerRatio = viewportWidth / viewportHeight;
+      const overscan = 1.12; // extra coverage to prevent edges from peeking through
+
+      if (containerRatio < videoRatio) {
+        // Container is taller (portrait) - size by height
+        const targetHeight = viewportHeight * overscan;
+        const targetWidth = targetHeight * videoRatio;
+        setIframeDimensions({ width: `${targetWidth}px`, height: `${targetHeight}px` });
+      } else {
+        // Container is wider - size by width
+        const targetWidth = viewportWidth * overscan;
+        const targetHeight = targetWidth / videoRatio;
+        setIframeDimensions({ width: `${targetWidth}px`, height: `${targetHeight}px` });
+      }
+    };
+
+    updateDimensions();
+    window.addEventListener('resize', updateDimensions);
+    return () => window.removeEventListener('resize', updateDimensions);
+  }, []);
 
   return (
     <section id="home" className="video-container">
       {/* Subtle top-left gradient overlay for improved contrast */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/30 to-transparent z-[1] pointer-events-none"></div>
       
-      {/* Tap to play overlay for mobile if video isn't autoplaying */}
-      {showPlayPrompt && !videoPlaying && (
-        <div 
-          className="absolute inset-0 z-[2] flex items-center justify-center bg-black/20 backdrop-blur-sm cursor-pointer"
-          onClick={handlePlayClick}
-        >
-          <div className="text-white text-center animate-pulse">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/40">
-              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-            </div>
-            <p className="text-sm uppercase tracking-wider">Tap to play</p>
-          </div>
-        </div>
-      )}
-      
       <motion.div 
         className="absolute inset-0 w-full h-full z-0"
         style={{ y }}
       >
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          poster="/media/hero-video-poster.jpg"
-          controls={false}
-          controlsList="nodownload noplaybackrate noremoteplayback noplay"
-          disablePictureInPicture
-          disableRemotePlayback
-          className="hero-video"
-          webkit-playsinline="true"
-          x-webkit-airplay="deny"
-          style={{
-            width: '100%',
-            height: '110%',
-            objectFit: 'cover',
-            WebkitTouchCallout: 'none',
-            pointerEvents: 'none',
-            opacity: videoLoaded ? 1 : 0.3,
-            transition: 'opacity 0.5s ease-in-out',
-          }}
-        >
-          <source src="/media/hero-video-1080p.webm" type="video/webm" />
-          <source src="/media/hero-video-1080p.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <div className="absolute inset-0 w-full h-full">
+          {!iframeVisible && (
+            <div
+              className="absolute inset-0 w-full h-full bg-center bg-cover z-[2]"
+              style={{ backgroundImage: "url('/media/hero-video-poster.jpg')" }}
+            ></div>
+          )}
+          <iframe
+            title="SocialSyn hero video"
+            src={iframeSrc}
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowFullScreen
+            frameBorder="0"
+            className="hero-video"
+            onLoad={() => setIframeLoaded(true)}
+            style={{
+              width: iframeDimensions.width,
+              height: iframeDimensions.height,
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              border: 'none',
+              pointerEvents: 'none',
+              opacity: iframeVisible ? 1 : 0,
+              transform: 'translate(-50%, -50%)',
+              transformOrigin: 'center',
+              transition: 'opacity 0.5s ease-in-out',
+            }}
+          />
+        </div>
       </motion.div>
       
       <div className="hero-content flex items-center h-full">
