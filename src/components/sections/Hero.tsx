@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, type MouseEvent } from 'react';
+import { useState, useEffect, useRef, type MouseEvent } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const HERO_VIDEO_ID = 'yzka9ZCMT0s';
@@ -12,6 +12,7 @@ export default function Hero() {
   const [iframeVisible, setIframeVisible] = useState(false);
   const [iframeSrc, setIframeSrc] = useState(HERO_VIDEO_BASE);
   const [iframeDimensions, setIframeDimensions] = useState<{ width: string; height: string }>({ width: '110%', height: '110%' });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const words = ['We', 'Synthesize', 'Presence.'];
   const ready = loaderDone; // Show content after loader is done
   const { scrollY } = useScroll();
@@ -49,6 +50,44 @@ export default function Hero() {
     if (!iframeLoaded) return;
     const timeout = window.setTimeout(() => setIframeVisible(true), 600);
     return () => window.clearTimeout(timeout);
+  }, [iframeLoaded]);
+
+  useEffect(() => {
+    if (!iframeLoaded || typeof window === 'undefined') return;
+
+    const iframe = iframeRef.current;
+    if (!iframe || !iframe.contentWindow) return;
+
+    const muteMessage = JSON.stringify({ event: 'command', func: 'mute', args: [] });
+    const playMessage = JSON.stringify({ event: 'command', func: 'playVideo', args: [] });
+
+    const sendCommands = () => {
+      if (!iframe.contentWindow) return;
+      iframe.contentWindow.postMessage(muteMessage, '*');
+      iframe.contentWindow.postMessage(playMessage, '*');
+    };
+
+    // Attempt immediately and retry for a short window to satisfy mobile autoplay policies
+    sendCommands();
+    const retryInterval = window.setInterval(sendCommands, 500);
+    const stopRetries = window.setTimeout(() => {
+      window.clearInterval(retryInterval);
+    }, 4000);
+
+    const handleMessage = (event: MessageEvent) => {
+      if (typeof event.data !== 'object' || event.data == null) return;
+      if ('event' in event.data && event.data.event === 'onReady') {
+        sendCommands();
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.clearInterval(retryInterval);
+      window.clearTimeout(stopRetries);
+      window.removeEventListener('message', handleMessage);
+    };
   }, [iframeLoaded]);
 
   useEffect(() => {
@@ -98,10 +137,11 @@ export default function Hero() {
           <iframe
             title="SocialSyn hero video"
             src={iframeSrc}
-            allow="autoplay; fullscreen; picture-in-picture"
+            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
             allowFullScreen
             frameBorder="0"
             className="hero-video"
+            ref={iframeRef}
             onLoad={() => setIframeLoaded(true)}
             style={{
               width: iframeDimensions.width,
