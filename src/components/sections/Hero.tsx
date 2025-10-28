@@ -63,8 +63,8 @@ export default function Hero() {
 
     const sendCommands = () => {
       if (!iframe.contentWindow) return;
-      iframe.contentWindow.postMessage(muteMessage, '*');
-      iframe.contentWindow.postMessage(playMessage, '*');
+      iframe.contentWindow.postMessage(muteMessage, 'https://www.youtube-nocookie.com');
+      iframe.contentWindow.postMessage(playMessage, 'https://www.youtube-nocookie.com');
     };
 
     // Attempt immediately and retry for a short window to satisfy mobile autoplay policies
@@ -75,18 +75,34 @@ export default function Hero() {
     }, 4000);
 
     const handleMessage = (event: MessageEvent) => {
-      if (typeof event.data !== 'object' || event.data == null) return;
-      if ('event' in event.data && event.data.event === 'onReady') {
+      if (!event.origin.includes('youtube')) return;
+      let data = event.data;
+      if (typeof data === 'string') {
+        try {
+          data = JSON.parse(data);
+        } catch {
+          return;
+        }
+      }
+      if (data && typeof data === 'object' && 'event' in data && data.event === 'onReady') {
         sendCommands();
       }
     };
 
     window.addEventListener('message', handleMessage);
 
+    const onFirstUserInteraction = () => {
+      sendCommands();
+    };
+    window.addEventListener('touchstart', onFirstUserInteraction, { passive: true, once: true });
+    window.addEventListener('click', onFirstUserInteraction, { passive: true, once: true });
+
     return () => {
       window.clearInterval(retryInterval);
       window.clearTimeout(stopRetries);
       window.removeEventListener('message', handleMessage);
+      window.removeEventListener('touchstart', onFirstUserInteraction);
+      window.removeEventListener('click', onFirstUserInteraction);
     };
   }, [iframeLoaded]);
 
