@@ -12,13 +12,13 @@ export default function Hero() {
   const words = ['We', 'Synthesize', 'Presence.'];
   const ready = loaderDone; // Show content after loader is done
   
-  // Show play prompt after 1 second if video isn't playing
+  // Show play prompt after 3 seconds if video isn't playing (give more time for autoplay)
   useEffect(() => {
     const timer = setTimeout(() => {
       if (!videoPlaying && videoRef.current && videoRef.current.paused) {
         setShowPlayPrompt(true);
       }
-    }, 1000);
+    }, 3000);
     
     return () => clearTimeout(timer);
   }, [videoPlaying]);
@@ -103,23 +103,24 @@ export default function Hero() {
       };
       document.addEventListener('visibilitychange', onVisibility);
       
-      // User interaction handlers for mobile browsers
-      const interactionEvents = ['touchstart', 'touchend', 'click', 'scroll'];
+      // User interaction handlers for mobile browsers - more aggressive
+      const interactionEvents = ['touchstart', 'touchend', 'click', 'scroll', 'touchmove'];
       const onUserInteraction = () => {
         if (!videoPlaying) {
           ensurePlayback();
         }
       };
       
+      // Try multiple times with different events
       interactionEvents.forEach(event => {
-        document.addEventListener(event, onUserInteraction, { passive: true, once: true });
+        window.addEventListener(event, onUserInteraction, { passive: true, once: true });
       });
 
       return () => {
         cleanup();
         document.removeEventListener('visibilitychange', onVisibility);
         interactionEvents.forEach(event => {
-          document.removeEventListener(event, onUserInteraction);
+          window.removeEventListener(event, onUserInteraction);
         });
       };
     }

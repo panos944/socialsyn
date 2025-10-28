@@ -66,7 +66,7 @@ export function Feed() {
       if (Math.abs(velocityRef.current) > 0.1) {
         currentScroll += velocityRef.current
         updateScroll(currentScroll)
-        velocityRef.current *= 0.95 // Deceleration
+        velocityRef.current *= 0.92 // Faster deceleration for more control
         animationFrameRef.current = requestAnimationFrame(momentum)
       } else {
         velocityRef.current = 0
@@ -85,7 +85,7 @@ export function Feed() {
       }
       velocityRef.current = 0
       
-      const delta = e.deltaY * 0.5
+      const delta = e.deltaY * 0.7
       currentScroll += delta
       updateScroll(currentScroll)
     }
@@ -113,16 +113,18 @@ export function Feed() {
       if (currentY == null) return
       
       const delta = lastTouchYRef.current - currentY
-      if (Math.abs(delta) < 0.5) return
+      if (Math.abs(delta) < 0.3) return
       
       e.preventDefault()
       e.stopPropagation()
       
-      // Calculate velocity for momentum
+      // Calculate velocity for momentum with smoother tracking
       const now = Date.now()
       const timeDelta = now - lastTouchTimeRef.current
       if (timeDelta > 0) {
-        velocityRef.current = delta / timeDelta * 16 // Normalize to 60fps
+        const newVelocity = delta / timeDelta * 16 // Normalize to 60fps
+        // Smooth velocity changes
+        velocityRef.current = velocityRef.current * 0.6 + newVelocity * 0.4
       }
       
       currentScroll += delta
@@ -193,11 +195,11 @@ export function Feed() {
       
       setTimeout(() => {
         setCurrentFeedIndex((prev) => (prev + 1) % feedImages.length)
-      }, 150)
+      }, 100)
       
       setTimeout(() => {
         setIsTransitioning(false)
-      }, 600)
+      }, 300)
     }
   }
 
@@ -208,11 +210,11 @@ export function Feed() {
       
       setTimeout(() => {
         setCurrentFeedIndex((prev) => (prev - 1 + feedImages.length) % feedImages.length)
-      }, 150)
+      }, 100)
       
       setTimeout(() => {
         setIsTransitioning(false)
-      }, 600)
+      }, 300)
     }
   }
 
@@ -329,10 +331,10 @@ export function Feed() {
             {/* Auto-Scrollable Image - Full width, fits side to side */}
             <div 
               className={`absolute left-0 right-0 w-full ${
-                isTransitioning ? 'opacity-0 transition-opacity duration-600' : 'opacity-100'
+                isTransitioning ? 'opacity-0 transition-opacity duration-300' : 'opacity-100'
               }`}
               style={{
-                transform: `translateY(-${scrollPosition}px)`,
+                transform: `translate3d(0, -${scrollPosition}px, 0)`,
                 height: 'auto',
                 willChange: 'transform'
               }}
