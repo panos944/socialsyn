@@ -242,16 +242,16 @@ export function Feed() {
               alt={prevFeedImage.title}
               width={1080}
               height={2700}
-              priority
-              quality={95}
+              quality={80}
+              loading="lazy"
             />
             <Image
               src={nextFeedImage.url}
               alt={nextFeedImage.title}
               width={1080}
               height={2700}
-              priority
-              quality={95}
+              quality={80}
+              loading="lazy"
             />
           </div>
 
@@ -266,7 +266,8 @@ export function Feed() {
                 width={600}
                 height={800}
                 className="w-full h-full object-cover"
-                quality={90}
+                quality={80}
+                loading="lazy"
               />
             </div>
           </div>
@@ -282,7 +283,8 @@ export function Feed() {
                 width={600}
                 height={800}
                 className="w-full h-full object-cover"
-                quality={90}
+                quality={80}
+                loading="lazy"
               />
             </div>
           </div>
@@ -366,9 +368,9 @@ export function Feed() {
                 height={2700}
                 className="w-full h-auto"
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 600px, 400px"
-                priority
-                quality={95}
-                loading="eager"
+                priority={currentFeedIndex === 0}
+                quality={80}
+                loading={currentFeedIndex === 0 ? 'eager' : 'lazy'}
                 style={{ objectFit: 'cover', objectPosition: 'center top' }}
                 ref={imageRef}
               />
