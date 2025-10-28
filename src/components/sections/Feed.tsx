@@ -235,6 +235,26 @@ export function Feed() {
 
         {/* Main Hero Feed with Side Previews */}
         <div className="w-96 mx-auto mb-12 relative group">
+          {/* Preload adjacent images (hidden) for instant loading */}
+          <div className="hidden">
+            <Image
+              src={prevFeedImage.url}
+              alt={prevFeedImage.title}
+              width={1080}
+              height={2700}
+              priority
+              quality={95}
+            />
+            <Image
+              src={nextFeedImage.url}
+              alt={nextFeedImage.title}
+              width={1080}
+              height={2700}
+              priority
+              quality={95}
+            />
+          </div>
+
           {/* Left Side Preview */}
           <div className={`hidden lg:block absolute left-[-230px] top-1/2 -translate-y-1/2 z-5 transition-all duration-300 ${
             isTransitioning ? 'opacity-20' : 'opacity-60'
@@ -348,6 +368,7 @@ export function Feed() {
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 600px, 400px"
                 priority
                 quality={95}
+                loading="eager"
                 style={{ objectFit: 'cover', objectPosition: 'center top' }}
                 ref={imageRef}
               />
