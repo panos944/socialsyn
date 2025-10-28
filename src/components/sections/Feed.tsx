@@ -7,37 +7,37 @@ import Image, { type ImageLoader } from 'next/image'
 const feedImages = [
   {
     url: '/images-used/Feeds/honey.jpg',
-    optimizedBase: '/optimized/feed/honey',
+    optimizedBase: '/images-used/Feeds/optimized/honey',
     title: 'Riza',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/babyline-feed.jpg',
-    optimizedBase: '/optimized/feed/babyline-feed',
+    optimizedBase: '/images-used/Feeds/optimized/babyline-feed',
     title: 'Babyline',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/costarellos_feed_2.jpg',
-    optimizedBase: '/optimized/feed/costarellos-feed-2',
+    optimizedBase: '/images-used/Feeds/optimized/costarellos-feed-2',
     title: 'Costarellos',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/italos-feed.jpg',
-    optimizedBase: '/optimized/feed/italos-feed',
+    optimizedBase: '/images-used/Feeds/optimized/italos-feed',
     title: 'O Italos',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/JCOU_FEED-1.jpg',
-    optimizedBase: '/optimized/feed/jcou-feed-1',
+    optimizedBase: '/images-used/Feeds/optimized/jcou-feed-1',
     title: 'JCou',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/wine-feed.jpg',
-    optimizedBase: '/optimized/feed/wine-feed',
+    optimizedBase: '/images-used/Feeds/optimized/wine-feed',
     title: 'Domaine Hatzimihalis',
     description: 'Social Media Feed'
   }
