@@ -1,41 +1,56 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import Image from 'next/image'
+import Image, { type ImageLoader } from 'next/image'
 
 // Feed images - using local feed exports
 const feedImages = [
   {
     url: '/images-used/Feeds/honey.jpg',
+    optimizedBase: '/optimized/feed/honey',
     title: 'Riza',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/babyline-feed.jpg',
+    optimizedBase: '/optimized/feed/babyline-feed',
     title: 'Babyline',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/costarellos_feed_2.jpg',
+    optimizedBase: '/optimized/feed/costarellos-feed-2',
     title: 'Costarellos',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/italos-feed.jpg',
+    optimizedBase: '/optimized/feed/italos-feed',
     title: 'O Italos',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/JCOU_FEED-1.jpg',
+    optimizedBase: '/optimized/feed/jcou-feed-1',
     title: 'JCou',
     description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/wine-feed.jpg',
+    optimizedBase: '/optimized/feed/wine-feed',
     title: 'Domaine Hatzimihalis',
     description: 'Social Media Feed'
   }
 ]
+
+const buildSizes = '(max-width: 768px) 90vw, (max-width: 1280px) 60vw, 420px'
+
+const feedBreakpoints = [420, 720, 1080] as const
+
+const createFeedLoader = (base: string): ImageLoader => ({ width }) => {
+  const target = feedBreakpoints.find(size => size >= width) ?? feedBreakpoints[feedBreakpoints.length - 1]
+  return `${base}-${target}.webp`
+}
 
 export function Feed() {
   const [scrollPosition, setScrollPosition] = useState(0)
@@ -244,6 +259,8 @@ export function Feed() {
               height={2700}
               quality={80}
               loading="lazy"
+              loader={createFeedLoader(prevFeedImage.optimizedBase)}
+              sizes={buildSizes}
             />
             <Image
               src={nextFeedImage.url}
@@ -252,6 +269,8 @@ export function Feed() {
               height={2700}
               quality={80}
               loading="lazy"
+              loader={createFeedLoader(nextFeedImage.optimizedBase)}
+              sizes={buildSizes}
             />
           </div>
 
@@ -268,6 +287,8 @@ export function Feed() {
                 className="w-full h-full object-cover"
                 quality={80}
                 loading="lazy"
+                loader={createFeedLoader(prevFeedImage.optimizedBase)}
+                sizes={buildSizes}
               />
             </div>
           </div>
@@ -285,6 +306,8 @@ export function Feed() {
                 className="w-full h-full object-cover"
                 quality={80}
                 loading="lazy"
+                loader={createFeedLoader(nextFeedImage.optimizedBase)}
+                sizes={buildSizes}
               />
             </div>
           </div>
@@ -367,10 +390,11 @@ export function Feed() {
                 width={1080}
                 height={2700}
                 className="w-full h-auto"
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 600px, 400px"
                 priority={currentFeedIndex === 0}
                 quality={80}
                 loading={currentFeedIndex === 0 ? 'eager' : 'lazy'}
+                loader={createFeedLoader(currentFeed.optimizedBase)}
+                sizes={buildSizes}
                 style={{ objectFit: 'cover', objectPosition: 'center top' }}
                 ref={imageRef}
               />
