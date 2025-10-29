@@ -4,7 +4,7 @@ export const services = [
     id: 1,
     title: "Brand Strategy & Digital Marketing",
     description: "We build strategies and campaigns that connect creativity with performance, driving visibility and measurable growth.",
-    image: "/images/DOMAINE HATZIMICHALIS/SUNSET XORA 6.JPG",
+    image: "/images/LEDOM/IMG_9779.jpg",
     features: ["SEO Optimization", "PPC Advertising", "Content Marketing"],
   },
   {
