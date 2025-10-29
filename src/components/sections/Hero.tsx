@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, type MouseEvent } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-const HERO_VIDEO_SRC = '/media/hero-background-v1.mp4';
+const HERO_VIDEO_SRC = '/images-used/hero-background-v1.mp4';
 const HERO_FALLBACK_IMAGE = '/media/hero-video-fallback.png';
 
 export default function Hero() {
@@ -60,72 +60,31 @@ export default function Hero() {
     const video = videoRef.current;
     if (!video) return;
 
-    const ensureMuted = () => {
-      video.defaultMuted = true;
-      video.muted = true;
-      video.playsInline = true;
-      video.setAttribute('muted', '');
-      video.setAttribute('playsinline', '');
-    };
+    video.defaultMuted = true;
+    video.muted = true;
+    video.playsInline = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
 
-    const markReady = () => {
-      setVideoReady(true);
-      setVideoFailed(false);
-    };
-
-    const tryPlay = async () => {
-      ensureMuted();
-      try {
-        await video.play();
-      } catch {
-        // Leave fallback visible; will retry on user gesture
+    const attemptPlayback = () => {
+      const result = video.play();
+      if (result && typeof result.then === 'function') {
+        result.catch(() => {
+          // Autoplay blocked; wait for a gesture
+        });
       }
     };
 
-    const handleLoadedData = () => {
-      markReady();
-      void tryPlay();
-    };
-
-    const handleCanPlay = () => {
-      markReady();
-    };
-
-    const handlePlaying = () => {
-      markReady();
-    };
-
-    const handleError = () => {
-      setVideoFailed(true);
-    };
-
-    video.addEventListener('loadeddata', handleLoadedData);
-    video.addEventListener('canplay', handleCanPlay);
-    video.addEventListener('canplaythrough', handleCanPlay);
-    video.addEventListener('playing', handlePlaying);
-    video.addEventListener('error', handleError);
-
-    if (video.readyState >= 2) {
-      markReady();
-    } else {
-      ensureMuted();
-      video.load();
-      void tryPlay();
-    }
+    attemptPlayback();
 
     const unlockOnGesture = () => {
-      void tryPlay();
+      attemptPlayback();
     };
 
     window.addEventListener('touchstart', unlockOnGesture, { passive: true, once: true });
     window.addEventListener('click', unlockOnGesture, { passive: true, once: true });
 
     return () => {
-      video.removeEventListener('loadeddata', handleLoadedData);
-      video.removeEventListener('canplay', handleCanPlay);
-      video.removeEventListener('canplaythrough', handleCanPlay);
-      video.removeEventListener('playing', handlePlaying);
-      video.removeEventListener('error', handleError);
       window.removeEventListener('touchstart', unlockOnGesture);
       window.removeEventListener('click', unlockOnGesture);
     };
@@ -161,6 +120,18 @@ export default function Hero() {
             preload="auto"
             poster={HERO_FALLBACK_IMAGE}
             src={HERO_VIDEO_SRC}
+            onLoadedData={() => {
+              setVideoReady(true);
+              setVideoFailed(false);
+              const video = videoRef.current;
+              if (video) {
+                const playPromise = video.play();
+                if (playPromise && typeof playPromise.then === 'function') {
+                  playPromise.catch(() => {});
+                }
+              }
+            }}
+            onError={() => setVideoFailed(true)}
             style={{
               position: 'absolute',
               top: '50%',
