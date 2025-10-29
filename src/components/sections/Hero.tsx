@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, type MouseEvent } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-const HERO_VIDEO_SRC = '/media/hero-background.mp4';
+const HERO_VIDEO_SRC = '/media/hero-background-v1.mp4';
 const HERO_FALLBACK_IMAGE = '/media/hero-video-fallback.png';
 
 export default function Hero() {
