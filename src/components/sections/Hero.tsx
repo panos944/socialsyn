@@ -3,17 +3,14 @@
 import { useState, useEffect, useRef, type MouseEvent } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-const HERO_VIDEO_ID = 'yzka9ZCMT0s';
-const HERO_VIDEO_BASE = `https://www.youtube-nocookie.com/embed/${HERO_VIDEO_ID}?autoplay=1&mute=1&controls=0&showinfo=0&loop=1&playlist=${HERO_VIDEO_ID}&modestbranding=1&playsinline=1&rel=0&enablejsapi=1&cc_load_policy=0&fs=0&disablekb=1&iv_load_policy=3`;
+const HERO_VIDEO_SRC = '/media/hero-background.mp4';
 const HERO_FALLBACK_IMAGE = '/media/hero-video-fallback.png';
 
 export default function Hero() {
   const [loaderDone, setLoaderDone] = useState(false);
-  const [iframeLoaded, setIframeLoaded] = useState(false);
-  const [iframeVisible, setIframeVisible] = useState(false);
-  const [iframeSrc, setIframeSrc] = useState(HERO_VIDEO_BASE);
-  const [iframeDimensions, setIframeDimensions] = useState<{ width: string; height: string }>({ width: '110%', height: '110%' });
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [videoReady, setVideoReady] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const words = ['We', 'Synthesize', 'Presence.'];
   const ready = loaderDone; // Show content after loader is done
   const { scrollY } = useScroll();
@@ -23,7 +20,6 @@ export default function Hero() {
   useEffect(() => {
     const onDone = () => setLoaderDone(true);
     if (typeof window !== 'undefined') {
-      setIframeSrc(`${HERO_VIDEO_BASE}&origin=${encodeURIComponent(window.location.origin)}`);
       window.addEventListener('initial-loader:done', onDone);
       // Fallback: if no loader event (e.g., cached session), enable immediately after a short delay
       const fallback = window.setTimeout(() => setLoaderDone(true), 500);
@@ -48,16 +44,6 @@ export default function Hero() {
   };
 
   useEffect(() => {
-    if (!iframeLoaded || typeof window === 'undefined') return;
-
-    const fallbackTimeout = window.setTimeout(() => {
-      setIframeVisible(true);
-    }, 2200);
-
-    return () => window.clearTimeout(fallbackTimeout);
-  }, [iframeLoaded]);
-
-  useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const preloadImage = new Image();
@@ -69,96 +55,72 @@ export default function Hero() {
   }, []);
 
   useEffect(() => {
-    if (!iframeLoaded || typeof window === 'undefined') return;
-
-    const iframe = iframeRef.current;
-    if (!iframe || !iframe.contentWindow) return;
-
-    const muteMessage = JSON.stringify({ event: 'command', func: 'mute', args: [] });
-    const playMessage = JSON.stringify({ event: 'command', func: 'playVideo', args: [] });
-
-    const sendCommands = () => {
-      if (!iframe.contentWindow) return;
-      iframe.contentWindow.postMessage(muteMessage, 'https://www.youtube-nocookie.com');
-      iframe.contentWindow.postMessage(playMessage, 'https://www.youtube-nocookie.com');
-    };
-
-    // Attempt immediately and retry for a short window to satisfy mobile autoplay policies
-    sendCommands();
-    const retryInterval = window.setInterval(sendCommands, 500);
-    const stopRetries = window.setTimeout(() => {
-      window.clearInterval(retryInterval);
-    }, 4000);
-
-    const handleMessage = (event: MessageEvent) => {
-      if (!event.origin.includes('youtube')) return;
-      let data = event.data;
-      if (typeof data === 'string') {
-        try {
-          data = JSON.parse(data);
-        } catch {
-          return;
-        }
-      }
-      if (!data || typeof data !== 'object' || !('event' in data)) {
-        return;
-      }
-
-      if (data.event === 'onReady') {
-        sendCommands();
-      }
-
-      if (data.event === 'onStateChange') {
-        const state = typeof data.info === 'number' ? data.info : Number(data.info);
-        if (state === 3 || state === 1) {
-          setIframeVisible(true);
-        }
-      }
-    };
-
-    window.addEventListener('message', handleMessage);
-
-    const onFirstUserInteraction = () => {
-      sendCommands();
-    };
-    window.addEventListener('touchstart', onFirstUserInteraction, { passive: true, once: true });
-    window.addEventListener('click', onFirstUserInteraction, { passive: true, once: true });
-
-    return () => {
-      window.clearInterval(retryInterval);
-      window.clearTimeout(stopRetries);
-      window.removeEventListener('message', handleMessage);
-      window.removeEventListener('touchstart', onFirstUserInteraction);
-      window.removeEventListener('click', onFirstUserInteraction);
-    };
-  }, [iframeLoaded]);
-
-  useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const updateDimensions = () => {
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const videoRatio = 16 / 9;
-      const containerRatio = viewportWidth / viewportHeight;
-      const overscan = 1.12; // extra coverage to prevent edges from peeking through
+    const video = videoRef.current;
+    if (!video) return;
 
-      if (containerRatio < videoRatio) {
-        // Container is taller (portrait) - size by height
-        const targetHeight = viewportHeight * overscan;
-        const targetWidth = targetHeight * videoRatio;
-        setIframeDimensions({ width: `${targetWidth}px`, height: `${targetHeight}px` });
-      } else {
-        // Container is wider - size by width
-        const targetWidth = viewportWidth * overscan;
-        const targetHeight = targetWidth / videoRatio;
-        setIframeDimensions({ width: `${targetWidth}px`, height: `${targetHeight}px` });
+    let hasMarkedVisible = false;
+
+    const markVisible = () => {
+      if (hasMarkedVisible) return;
+      hasMarkedVisible = true;
+      setVideoReady(true);
+    };
+
+    const handleError = () => setVideoFailed(true);
+
+    const attemptPlayback = () => {
+      video.muted = true;
+      video.playsInline = true;
+      const playPromise = video.play();
+      if (playPromise && typeof playPromise.then === 'function') {
+        playPromise.catch(() => {
+          // Leave fallback visible until a user gesture occurs
+        });
       }
     };
 
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    return () => window.removeEventListener('resize', updateDimensions);
+    const handleLoadedData = () => {
+      markVisible();
+      attemptPlayback();
+    };
+
+    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('canplaythrough', markVisible);
+    video.addEventListener('playing', markVisible);
+    video.addEventListener('error', handleError);
+
+    if (video.readyState >= 2) {
+      markVisible();
+    }
+
+    attemptPlayback();
+
+    const unlockOnGesture = () => {
+      attemptPlayback();
+    };
+
+    window.addEventListener('touchstart', unlockOnGesture, { passive: true, once: true });
+    window.addEventListener('click', unlockOnGesture, { passive: true, once: true });
+
+    const failSafe = window.setTimeout(() => {
+      if (video.readyState >= 2) {
+        markVisible();
+      } else {
+        attemptPlayback();
+      }
+    }, 4000);
+
+    return () => {
+      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('canplaythrough', markVisible);
+      video.removeEventListener('playing', markVisible);
+      video.removeEventListener('error', handleError);
+      window.removeEventListener('touchstart', unlockOnGesture);
+      window.removeEventListener('click', unlockOnGesture);
+      window.clearTimeout(failSafe);
+    };
   }, []);
 
   return (
@@ -175,35 +137,38 @@ export default function Hero() {
             className="absolute inset-0 w-full h-full bg-center bg-cover z-[2]"
             style={{
               backgroundImage: `url('${HERO_FALLBACK_IMAGE}')`,
-              opacity: iframeVisible ? 0 : 1,
+              opacity: videoReady && !videoFailed ? 0 : 1,
               transition: 'opacity 900ms ease-in-out 120ms',
               pointerEvents: 'none',
               willChange: 'opacity',
             }}
           ></div>
-          <iframe
-            title="SocialSyn hero video"
-            src={iframeSrc}
-            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-            allowFullScreen
-            frameBorder="0"
+          <video
+            ref={videoRef}
             className="hero-video"
-            ref={iframeRef}
-            onLoad={() => setIframeLoaded(true)}
+            playsInline
+            muted
+            loop
+            autoPlay
+            preload="auto"
+            poster={HERO_FALLBACK_IMAGE}
             style={{
-              width: iframeDimensions.width,
-              height: iframeDimensions.height,
               position: 'absolute',
               top: '50%',
               left: '50%',
-              border: 'none',
-              pointerEvents: 'none',
-              opacity: iframeVisible ? 1 : 0,
               transform: 'translate(-50%, -50%)',
-              transformOrigin: 'center',
-              transition: 'opacity 0.5s ease-in-out',
+              width: 'auto',
+              height: 'auto',
+              minWidth: '100%',
+              minHeight: '100%',
+              objectFit: 'cover',
+              pointerEvents: 'none',
+              opacity: videoReady && !videoFailed ? 1 : 0,
+              transition: 'opacity 0.6s ease-in-out',
             }}
-          />
+          >
+            <source src={HERO_VIDEO_SRC} type="video/mp4" />
+          </video>
         </div>
       </motion.div>
       

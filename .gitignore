@@ -16,7 +16,8 @@ public/optimized/**
 # Videos: ignore all except the current hero video
 public/**/*.mp4
 public/**/*.mov
-!public/video-output-02B0EFCF-7710-41BF-B442-B39610C77A3F-2.mov
+!public/media/
+!public/media/**
 
 # Environment variables
 .env
