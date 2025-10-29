@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 
 const HERO_VIDEO_ID = 'yzka9ZCMT0s';
 const HERO_VIDEO_BASE = `https://www.youtube-nocookie.com/embed/${HERO_VIDEO_ID}?autoplay=1&mute=1&controls=0&showinfo=0&loop=1&playlist=${HERO_VIDEO_ID}&modestbranding=1&playsinline=1&rel=0&enablejsapi=1&cc_load_policy=0&fs=0&disablekb=1&iv_load_policy=3`;
+const HERO_FALLBACK_IMAGE = '/media/hero-video-fallback.png';
 
 export default function Hero() {
   const [loaderDone, setLoaderDone] = useState(false);
@@ -51,6 +52,17 @@ export default function Hero() {
     const timeout = window.setTimeout(() => setIframeVisible(true), 600);
     return () => window.clearTimeout(timeout);
   }, [iframeLoaded]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const preloadImage = new Image();
+    preloadImage.src = HERO_FALLBACK_IMAGE;
+
+    return () => {
+      preloadImage.src = '';
+    };
+  }, []);
 
   useEffect(() => {
     if (!iframeLoaded || typeof window === 'undefined') return;
@@ -147,7 +159,7 @@ export default function Hero() {
           {!iframeVisible && (
             <div
               className="absolute inset-0 w-full h-full bg-center bg-cover z-[2]"
-              style={{ backgroundImage: "url('/media/hero-video-poster.jpg')" }}
+              style={{ backgroundImage: `url('${HERO_FALLBACK_IMAGE}')` }}
             ></div>
           )}
           <iframe
