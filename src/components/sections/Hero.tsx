@@ -48,9 +48,13 @@ export default function Hero() {
   };
 
   useEffect(() => {
-    if (!iframeLoaded) return;
-    const timeout = window.setTimeout(() => setIframeVisible(true), 600);
-    return () => window.clearTimeout(timeout);
+    if (!iframeLoaded || typeof window === 'undefined') return;
+
+    const fallbackTimeout = window.setTimeout(() => {
+      setIframeVisible(true);
+    }, 2200);
+
+    return () => window.clearTimeout(fallbackTimeout);
   }, [iframeLoaded]);
 
   useEffect(() => {
@@ -96,8 +100,19 @@ export default function Hero() {
           return;
         }
       }
-      if (data && typeof data === 'object' && 'event' in data && data.event === 'onReady') {
+      if (!data || typeof data !== 'object' || !('event' in data)) {
+        return;
+      }
+
+      if (data.event === 'onReady') {
         sendCommands();
+      }
+
+      if (data.event === 'onStateChange') {
+        const state = typeof data.info === 'number' ? data.info : Number(data.info);
+        if (state === 3 || state === 1) {
+          setIframeVisible(true);
+        }
       }
     };
 
@@ -156,12 +171,16 @@ export default function Hero() {
         style={{ y }}
       >
         <div className="absolute inset-0 w-full h-full">
-          {!iframeVisible && (
-            <div
-              className="absolute inset-0 w-full h-full bg-center bg-cover z-[2]"
-              style={{ backgroundImage: `url('${HERO_FALLBACK_IMAGE}')` }}
-            ></div>
-          )}
+          <div
+            className="absolute inset-0 w-full h-full bg-center bg-cover z-[2]"
+            style={{
+              backgroundImage: `url('${HERO_FALLBACK_IMAGE}')`,
+              opacity: iframeVisible ? 0 : 1,
+              transition: 'opacity 900ms ease-in-out 120ms',
+              pointerEvents: 'none',
+              willChange: 'opacity',
+            }}
+          ></div>
           <iframe
             title="SocialSyn hero video"
             src={iframeSrc}
