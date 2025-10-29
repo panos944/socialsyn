@@ -5,11 +5,13 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 
 const HERO_VIDEO_SRC = '/images-used/hero-background-v1.mp4';
 const HERO_FALLBACK_IMAGE = '/media/hero-video-fallback.png';
+const HERO_FALLBACK_IMAGE_MOBILE = '/images-used/hero-video-poster.jpg';
 
 export default function Hero() {
   const [loaderDone, setLoaderDone] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const words = ['We', 'Synthesize', 'Presence.'];
   const ready = loaderDone; // Show content after loader is done
@@ -46,11 +48,23 @@ export default function Hero() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const preloadImage = new Image();
-    preloadImage.src = HERO_FALLBACK_IMAGE;
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    const preloadDesktop = new Image();
+    preloadDesktop.src = HERO_FALLBACK_IMAGE;
+
+    const preloadMobile = new Image();
+    preloadMobile.src = HERO_FALLBACK_IMAGE_MOBILE;
 
     return () => {
-      preloadImage.src = '';
+      window.removeEventListener('resize', handleResize);
+      preloadDesktop.src = '';
+      preloadMobile.src = '';
     };
   }, []);
 
@@ -103,50 +117,52 @@ export default function Hero() {
           <div
             className="absolute inset-0 w-full h-full bg-center bg-cover z-[2]"
             style={{
-              backgroundImage: `url('${HERO_FALLBACK_IMAGE}')`,
-              opacity: videoReady && !videoFailed ? 0 : 1,
+              backgroundImage: `url('${isMobile ? HERO_FALLBACK_IMAGE_MOBILE : HERO_FALLBACK_IMAGE}')`,
+              opacity: isMobile ? 1 : videoReady && !videoFailed ? 0 : 1,
               transition: 'opacity 900ms ease-in-out 120ms',
               pointerEvents: 'none',
               willChange: 'opacity',
             }}
           ></div>
-          <video
-            ref={videoRef}
-            className="hero-video"
-            playsInline
-            muted
-            loop
-            autoPlay
-            preload="auto"
-            poster={HERO_FALLBACK_IMAGE}
-            src={HERO_VIDEO_SRC}
-            onLoadedData={() => {
-              setVideoReady(true);
-              setVideoFailed(false);
-              const video = videoRef.current;
-              if (video) {
-                const playPromise = video.play();
-                if (playPromise && typeof playPromise.then === 'function') {
-                  playPromise.catch(() => {});
+          {!isMobile && (
+            <video
+              ref={videoRef}
+              className="hero-video"
+              playsInline
+              muted
+              loop
+              autoPlay
+              preload="auto"
+              poster={HERO_FALLBACK_IMAGE}
+              src={HERO_VIDEO_SRC}
+              onLoadedData={() => {
+                setVideoReady(true);
+                setVideoFailed(false);
+                const video = videoRef.current;
+                if (video) {
+                  const playPromise = video.play();
+                  if (playPromise && typeof playPromise.then === 'function') {
+                    playPromise.catch(() => {});
+                  }
                 }
-              }
-            }}
-            onError={() => setVideoFailed(true)}
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 'auto',
-              height: 'auto',
-              minWidth: '100%',
-              minHeight: '100%',
-              objectFit: 'cover',
-              pointerEvents: 'none',
-              opacity: videoReady && !videoFailed ? 1 : 0,
-              transition: 'opacity 0.6s ease-in-out',
-            }}
-          />
+              }}
+              onError={() => setVideoFailed(true)}
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 'auto',
+                height: 'auto',
+                minWidth: '100%',
+                minHeight: '100%',
+                objectFit: 'cover',
+                pointerEvents: 'none',
+                opacity: videoReady && !videoFailed ? 1 : 0,
+                transition: 'opacity 0.6s ease-in-out',
+              }}
+            />
+          )}
         </div>
       </motion.div>
       
