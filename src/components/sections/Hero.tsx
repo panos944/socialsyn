@@ -68,30 +68,64 @@ export default function Hero() {
       video.setAttribute('playsinline', '');
     };
 
-    const tryPlay = () => {
+    const markReady = () => {
+      setVideoReady(true);
+      setVideoFailed(false);
+    };
+
+    const tryPlay = async () => {
       ensureMuted();
-      const playPromise = video.play();
-      if (playPromise && typeof playPromise.then === 'function') {
-        playPromise.catch(() => {
-          // Autoplay blocked, wait for gesture
-        });
+      try {
+        await video.play();
+      } catch {
+        // Leave fallback visible; will retry on user gesture
       }
     };
 
+    const handleLoadedData = () => {
+      markReady();
+      void tryPlay();
+    };
+
+    const handleCanPlay = () => {
+      markReady();
+    };
+
+    const handlePlaying = () => {
+      markReady();
+    };
+
+    const handleError = () => {
+      setVideoFailed(true);
+    };
+
+    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('canplaythrough', handleCanPlay);
+    video.addEventListener('playing', handlePlaying);
+    video.addEventListener('error', handleError);
+
     if (video.readyState >= 2) {
-      setVideoReady(true);
+      markReady();
+    } else {
+      ensureMuted();
+      video.load();
+      void tryPlay();
     }
 
-    tryPlay();
-
     const unlockOnGesture = () => {
-      tryPlay();
+      void tryPlay();
     };
 
     window.addEventListener('touchstart', unlockOnGesture, { passive: true, once: true });
     window.addEventListener('click', unlockOnGesture, { passive: true, once: true });
 
     return () => {
+      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('canplaythrough', handleCanPlay);
+      video.removeEventListener('playing', handlePlaying);
+      video.removeEventListener('error', handleError);
       window.removeEventListener('touchstart', unlockOnGesture);
       window.removeEventListener('click', unlockOnGesture);
     };
@@ -126,10 +160,7 @@ export default function Hero() {
             autoPlay
             preload="auto"
             poster={HERO_FALLBACK_IMAGE}
-            onLoadedData={() => setVideoReady(true)}
-            onCanPlay={() => setVideoReady(true)}
-            onPlay={() => setVideoReady(true)}
-            onError={() => setVideoFailed(true)}
+            src={HERO_VIDEO_SRC}
             style={{
               position: 'absolute',
               top: '50%',
@@ -144,9 +175,7 @@ export default function Hero() {
               opacity: videoReady && !videoFailed ? 1 : 0,
               transition: 'opacity 0.6s ease-in-out',
             }}
-          >
-            <source src={HERO_VIDEO_SRC} type="video/mp4" />
-          </video>
+          />
         </div>
       </motion.div>
       
