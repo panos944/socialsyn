@@ -171,26 +171,6 @@ export function SimplePhotographySection() {
           </div>
         </div>
         
-        {/* Elegant Photo Title */}
-        <div className="text-center mb-8">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`title-${displayIndex}`}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-            >
-              <p className="text-white/60 text-sm uppercase tracking-widest mb-2">
-                {currentClient}
-              </p>
-              <h3 className="text-white text-xl font-light">
-                {currentTitle}
-              </h3>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
         {/* Thumbnail Gallery */}
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap md:flex-nowrap justify-center md:justify-between gap-3">
