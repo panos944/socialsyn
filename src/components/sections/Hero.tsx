@@ -60,66 +60,40 @@ export default function Hero() {
     const video = videoRef.current;
     if (!video) return;
 
-    let hasMarkedVisible = false;
-
-    const markVisible = () => {
-      if (hasMarkedVisible) return;
-      hasMarkedVisible = true;
-      setVideoReady(true);
-    };
-
-    const handleError = () => setVideoFailed(true);
-
-    const attemptPlayback = () => {
+    const ensureMuted = () => {
+      video.defaultMuted = true;
       video.muted = true;
       video.playsInline = true;
+      video.setAttribute('muted', '');
+      video.setAttribute('playsinline', '');
+    };
+
+    const tryPlay = () => {
+      ensureMuted();
       const playPromise = video.play();
       if (playPromise && typeof playPromise.then === 'function') {
         playPromise.catch(() => {
-          // Leave fallback visible until a user gesture occurs
+          // Autoplay blocked, wait for gesture
         });
       }
     };
 
-    const handleLoadedData = () => {
-      markVisible();
-      attemptPlayback();
-    };
-
-    video.addEventListener('loadeddata', handleLoadedData);
-    video.addEventListener('canplaythrough', markVisible);
-    video.addEventListener('playing', markVisible);
-    video.addEventListener('error', handleError);
-
     if (video.readyState >= 2) {
-      markVisible();
+      setVideoReady(true);
     }
 
-    attemptPlayback();
+    tryPlay();
 
     const unlockOnGesture = () => {
-      attemptPlayback();
+      tryPlay();
     };
 
     window.addEventListener('touchstart', unlockOnGesture, { passive: true, once: true });
     window.addEventListener('click', unlockOnGesture, { passive: true, once: true });
 
-    const failSafe = window.setTimeout(() => {
-      if (video.readyState >= 2) {
-        markVisible();
-      } else {
-        attemptPlayback();
-      }
-    }, 4000);
-
     return () => {
-      video.removeEventListener('loadeddata', handleLoadedData);
-      video.removeEventListener('canplaythrough', markVisible);
-      video.removeEventListener('playing', markVisible);
-      video.removeEventListener('error', handleError);
       window.removeEventListener('touchstart', unlockOnGesture);
       window.removeEventListener('click', unlockOnGesture);
-      window.clearTimeout(failSafe);
     };
   }, []);
 
@@ -152,6 +126,10 @@ export default function Hero() {
             autoPlay
             preload="auto"
             poster={HERO_FALLBACK_IMAGE}
+            onLoadedData={() => setVideoReady(true)}
+            onCanPlay={() => setVideoReady(true)}
+            onPlay={() => setVideoReady(true)}
+            onError={() => setVideoFailed(true)}
             style={{
               position: 'absolute',
               top: '50%',
