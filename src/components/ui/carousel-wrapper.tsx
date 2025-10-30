@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import type { UseEmblaCarouselType } from 'embla-carousel-react';
 import {
   Carousel,
   CarouselContent,
@@ -17,6 +18,12 @@ interface CarouselWrapperProps {
   className?: string;
 }
 
+const RESPONSIVE_BASIS: Record<number, string> = {
+  2: 'md:basis-1/2 lg:basis-1/2',
+  3: 'md:basis-1/3 lg:basis-1/3',
+  4: 'md:basis-1/4 lg:basis-1/4',
+};
+
 export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({
   children,
   itemsPerView = 1,
@@ -26,42 +33,75 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({
   showIndicators = true,
   className = '',
 }) => {
-  const [active, setActive] = useState(0);
-  const totalSlides = Math.ceil(React.Children.count(children) / itemsPerView);
+  const slideCount = React.Children.count(children);
+  const totalGroups = Math.max(1, Math.ceil(slideCount / itemsPerView));
+  const [activeGroup, setActiveGroup] = useState(0);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [emblaApi, setEmblaApi] = useState<UseEmblaCarouselType[1] | null>(null);
+
+  const getGroupTarget = (groupIndex: number) => {
+    if (!emblaApi) return 0;
+    const maxIndex = emblaApi.scrollSnapList().length - 1;
+    return Math.min(groupIndex * itemsPerView, maxIndex);
+  };
 
   // Handle auto-play
   useEffect(() => {
-    if (!autoPlay) return;
+    if (!autoPlay || !emblaApi) return;
+    const scrollSnaps = emblaApi.scrollSnapList();
+    if (scrollSnaps.length <= 1) return;
 
     const timer = setInterval(() => {
-      setActive((current) => (current + 1) % totalSlides);
+      const currentIndex = emblaApi.selectedScrollSnap();
+      const currentGroup = Math.floor(currentIndex / itemsPerView);
+      const nextGroup = (currentGroup + 1) % totalGroups;
+      emblaApi.scrollTo(getGroupTarget(nextGroup));
     }, interval);
 
     return () => clearInterval(timer);
-  }, [autoPlay, interval, totalSlides]);
+  }, [autoPlay, emblaApi, interval, itemsPerView, totalGroups]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const updateActiveGroup = () => {
+      const selectedIndex = emblaApi.selectedScrollSnap();
+      setActiveGroup(Math.floor(selectedIndex / itemsPerView));
+    };
+
+    updateActiveGroup();
+    emblaApi.on('select', updateActiveGroup);
+    emblaApi.on('reInit', updateActiveGroup);
+
+    return () => {
+      emblaApi.off('select', updateActiveGroup);
+      emblaApi.off('reInit', updateActiveGroup);
+    };
+  }, [emblaApi, itemsPerView]);
 
   // Update active slide when indicator is clicked
   const handleIndicatorClick = (index: number) => {
-    setActive(index);
-    if (carouselRef.current) {
-      // This assumes Embla Carousel is being used under the hood
-      // If not, this will need to be adjusted to work with your carousel implementation
-    }
+    if (!emblaApi) return;
+    emblaApi.scrollTo(getGroupTarget(index));
   };
+
+  const itemWidthClass =
+    itemsPerView > 1
+      ? RESPONSIVE_BASIS[itemsPerView] ?? 'md:basis-1/2 lg:basis-1/2'
+      : 'basis-full';
 
   return (
     <div className={`relative ${className}`}>
       <Carousel
         ref={carouselRef}
         className="w-full"
-        onSelect={() => setActive(0)}
+        setApi={setEmblaApi}
       >
         <CarouselContent>
           {React.Children.map(children, (child, i) => (
             <CarouselItem 
               key={i}
-              className={`${itemsPerView > 1 ? `md:basis-1/${itemsPerView} lg:basis-1/${itemsPerView}` : 'basis-full'}`}
+              className={itemWidthClass}
             >
               {child}
             </CarouselItem>
@@ -78,12 +118,12 @@ export const CarouselWrapper: React.FC<CarouselWrapperProps> = ({
 
       {showIndicators && (
         <div className="flex justify-center mt-4">
-          {Array.from({ length: totalSlides }).map((_, i) => (
+          {Array.from({ length: totalGroups }).map((_, i) => (
             <button
               key={i}
               onClick={() => handleIndicatorClick(i)}
               className={`w-3 h-3 mx-1 rounded-full transition-colors ${
-                i === active ? 'bg-primary' : 'bg-gray-300'
+                i === activeGroup ? 'bg-primary' : 'bg-gray-300'
               }`}
               aria-label={`Go to slide ${i + 1}`}
             />

@@ -13,7 +13,7 @@ export const services = [
     description: "We manage your brand’s presence, curate the feed, write captions, engage with your audience, and optimize Meta Ads.",
     image: "/images/LEDOM/IMG_9580.jpg",
     instagramGrid: true,
-    feedImage: "public/images/LEDOM/IMG_9580.jpg",
+    feedImage: "/images/LEDOM/IMG_9580.jpg",
     features: ["Content Creation", "Community Management", "Performance Analytics"],
   },
   {
@@ -39,7 +39,7 @@ export const portfolioItems = [
     title: "High-end Fashion Photography ",
     description: "",
     image: "/images/JCou/IMG_9439%205.JPG",
-    category: "digital-marketing",
+    category: "photography",
     categoryLabel: "Photography",
   },
   {
