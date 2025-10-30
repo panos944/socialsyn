@@ -54,7 +54,10 @@ export function SimplePhotographySection() {
   const currentTitle = currentPhoto.title ?? 'Stay tuned for our next story'
 
   return (
-    <section className="photography-section min-h-screen bg-gradient-to-b from-black via-gray-900 to-black py-20">
+    <section
+      id="portfolio"
+      className="photography-section min-h-screen bg-gradient-to-b from-black via-gray-900 to-black py-20"
+    >
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">

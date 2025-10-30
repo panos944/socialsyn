@@ -14,8 +14,8 @@ const feedImages = [
   {
     url: '/images-used/Feeds/bridal-feed.jpg',
     optimizedBase: '/images-used/Feeds/optimized/bridal-feed',
-    title: 'Social Media Feed',
-    description: 'Costarellos Bridal'
+    title: 'Costarellos Bridal',
+    description: 'Social Media Feed'
   },
   {
     url: '/images-used/Feeds/babyline-feed.jpg',
@@ -70,6 +70,7 @@ export function Feed() {
   const lastTouchYRef = useRef<number | null>(null)
   const lastTouchTimeRef = useRef<number>(0)
   const animationFrameRef = useRef<number | null>(null)
+  const allowPageScrollRef = useRef(false)
 
   useEffect(() => {
     const container = containerRef.current
@@ -133,6 +134,11 @@ export function Feed() {
         animationFrameRef.current = null
       }
       velocityRef.current = 0
+      allowPageScrollRef.current = false
+      const el = containerRef.current
+      if (el) {
+        el.style.touchAction = maxScroll > 0 ? 'none' : 'auto'
+      }
       
       touchStartYRef.current = e.touches[0].clientY
       lastTouchYRef.current = e.touches[0].clientY
@@ -155,15 +161,26 @@ export function Feed() {
       const atBottomAndPushingUp = scrollPosition >= maxScroll - boundaryBuffer && delta > 0
 
       if (atTopAndPullingDown || atBottomAndPushingUp) {
-        const scrollDelta = delta
-        if (Math.abs(scrollDelta) > 0) {
-          window.scrollBy({ top: scrollDelta, behavior: 'auto' })
-        }
         velocityRef.current = 0
-        touchStartYRef.current = currentY
-        lastTouchYRef.current = currentY
+        touchStartYRef.current = null
+        lastTouchYRef.current = null
         lastTouchTimeRef.current = now
+        if (!allowPageScrollRef.current) {
+          allowPageScrollRef.current = true
+          const el = containerRef.current
+          if (el) {
+            el.style.touchAction = 'pan-y'
+          }
+        }
         return
+      }
+
+      if (allowPageScrollRef.current) {
+        allowPageScrollRef.current = false
+        const el = containerRef.current
+        if (el) {
+          el.style.touchAction = maxScroll > 0 ? 'none' : 'auto'
+        }
       }
 
       e.preventDefault()
@@ -191,6 +208,14 @@ export function Feed() {
       // Start momentum scrolling
       if (Math.abs(velocityRef.current) > 0.5) {
         animationFrameRef.current = requestAnimationFrame(momentum)
+      }
+
+      if (allowPageScrollRef.current) {
+        allowPageScrollRef.current = false
+        const el = containerRef.current
+        if (el) {
+          el.style.touchAction = maxScroll > 0 ? 'none' : 'auto'
+        }
       }
     }
 

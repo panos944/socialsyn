@@ -109,31 +109,26 @@ export default function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent className="bg-white text-neutral">
-            <div className="flex justify-between items-center mt-4">
-              <div className="flex-1 flex justify-center">
-                <Image
-                  src="/images-used/Socialsyn_Logo-05.png"
-                  alt="Socialsyn logo"
-                  width={200}
-                  height={64}
-                  className="h-10 w-auto"
-                  style={{
-                    transform: 'scale(2.5)',
-                    transformOrigin: 'center',
-                    filter: isScrolled ? 'none' : 'brightness(0) invert(1)'
-                  }}
-                />
-              </div>
+            <div className="flex items-center justify-center pb-6 border-b border-neutral-lighter relative">
+              <Image
+                src="/images-used/Socialsyn_Logo-05.png"
+                alt="Socialsyn logo"
+                width={380}
+                height={120}
+                className="h-20 w-auto"
+                priority
+              />
               <Button 
                 variant="ghost" 
                 size="icon" 
-                className="text-neutral"
+                className="text-neutral absolute right-0 top-1/2 -translate-y-1/2"
                 onClick={() => setIsMenuOpen(false)}
+                aria-label="Close menu"
               >
                 <X className="h-6 w-6" />
               </Button>
             </div>
-            <nav className="flex flex-col items-center space-y-8 mt-16 text-center">
+            <nav className="flex flex-col items-center space-y-8 mt-12 text-center">
               {navLinks.map((link) => (
                 <a
                   key={link.name}
