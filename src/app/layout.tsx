@@ -14,6 +14,15 @@ export const metadata: Metadata = {
   description: "Professional digital marketing services to grow your business online. Social media management, content creation, and strategic marketing solutions.",
   keywords: ["digital marketing", "social media management", "content creation", "photography", "brand strategy", "digital agency", "Greece", "Athens"],
   authors: [{ name: "Socialsyn" }],
+  icons: {
+    icon: [
+      { url: "/images-used/Socialsyn_Logo-05.png", type: "image/png" }
+    ],
+    shortcut: ["/images-used/Socialsyn_Logo-05.png"],
+    apple: [
+      { url: "/images-used/Socialsyn_Logo-05.png", type: "image/png" }
+    ]
+  },
   openGraph: {
     title: "Socialsyn - Digital Marketing Agency",
     description: "Professional digital marketing services to grow your business online.",
