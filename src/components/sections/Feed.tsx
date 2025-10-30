@@ -155,17 +155,14 @@ export function Feed() {
       const atBottomAndPushingUp = scrollPosition >= maxScroll - boundaryBuffer && delta > 0
 
       if (atTopAndPullingDown || atBottomAndPushingUp) {
-        velocityRef.current = 0
-        touchStartYRef.current = null
-        lastTouchYRef.current = null
-        lastTouchTimeRef.current = now
-        const el = containerRef.current
-        if (el) {
-          el.style.touchAction = 'pan-y'
-          window.setTimeout(() => {
-            el.style.touchAction = maxScroll > 0 ? 'none' : 'auto'
-          }, 32)
+        const scrollDelta = delta
+        if (Math.abs(scrollDelta) > 0) {
+          window.scrollBy({ top: scrollDelta, behavior: 'auto' })
         }
+        velocityRef.current = 0
+        touchStartYRef.current = currentY
+        lastTouchYRef.current = currentY
+        lastTouchTimeRef.current = now
         return
       }
 

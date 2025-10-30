@@ -52,17 +52,6 @@ export default function Home() {
           {/* Photography Section */}
           <SimplePhotographySection />
           
-          {/* Elegant Separator */}
-          <div className="relative py-16 z-20">
-            <div className="w-full px-4">
-              <div className="flex items-center">
-                <div className="flex-1 h-px bg-gradient-to-r from-transparent via-primary/40 to-primary/60"></div>
-                <div className="w-2 h-2 rounded-full bg-primary/80 mx-8"></div>
-                <div className="flex-1 h-px bg-gradient-to-l from-transparent via-primary/40 to-primary/60"></div>
-              </div>
-            </div>
-          </div>
-          
           {/* Brand Image Section replacing Portfolio */}
           <section className="min-h-screen bg-white relative z-20">
             <div className="absolute inset-0">
