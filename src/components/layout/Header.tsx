@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -63,9 +64,19 @@ export default function Header() {
     >
       <div className="container mx-auto px-8 md:px-12 flex justify-between items-center">
         <Link href="/" className="flex items-center" aria-label="Socialsyn home">
-          <span className={`font-heading text-2xl ${isScrolled ? 'text-primary' : 'text-white'}`}>
-            Social<span className="text-accent-foreground">syn</span>
-          </span>
+          <Image
+            src="/images-used/Socialsyn_Logo-05.png"
+            alt="Socialsyn logo"
+            width={280}
+            height={90}
+            priority
+            className="h-12 w-auto md:h-12"
+            style={{
+              transform: 'scale(2.5)',
+              transformOrigin: 'left center',
+              filter: isScrolled ? 'none' : 'brightness(0) invert(1)'
+            }}
+          />
         </Link>
 
         {/* Desktop Navigation */}
@@ -99,8 +110,19 @@ export default function Header() {
           </SheetTrigger>
           <SheetContent className="bg-white text-neutral">
             <div className="flex justify-between items-center mt-4">
-              <div className="flex-1 text-center text-base tracking-[0.3em] uppercase text-neutral">
-                SocialSyn
+              <div className="flex-1 flex justify-center">
+                <Image
+                  src="/images-used/Socialsyn_Logo-05.png"
+                  alt="Socialsyn logo"
+                  width={200}
+                  height={64}
+                  className="h-10 w-auto"
+                  style={{
+                    transform: 'scale(2.5)',
+                    transformOrigin: 'center',
+                    filter: isScrolled ? 'none' : 'brightness(0) invert(1)'
+                  }}
+                />
               </div>
               <Button 
                 variant="ghost" 

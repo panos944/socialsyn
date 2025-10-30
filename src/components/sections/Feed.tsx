@@ -12,6 +12,12 @@ const feedImages = [
     description: 'Social Media Feed'
   },
   {
+    url: '/images-used/Feeds/bridal-feed.jpg',
+    optimizedBase: '/images-used/Feeds/optimized/bridal-feed',
+    title: 'Social Media Feed',
+    description: 'Costarellos Bridal'
+  },
+  {
     url: '/images-used/Feeds/babyline-feed.jpg',
     optimizedBase: '/images-used/Feeds/optimized/babyline-feed',
     title: 'Babyline',
@@ -90,17 +96,30 @@ export function Feed() {
 
     const handleWheelEvent = (e: WheelEvent) => {
       if (maxScroll <= 0) return
+
+      const delta = e.deltaY * 0.7
+      const boundaryBuffer = 1
+      const atTopAndScrollingUp = currentScroll <= boundaryBuffer && delta < 0
+      const atBottomAndScrollingDown = currentScroll >= maxScroll - boundaryBuffer && delta > 0
+
+      if (atTopAndScrollingUp || atBottomAndScrollingDown) {
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current)
+          animationFrameRef.current = null
+        }
+        velocityRef.current = 0
+        return
+      }
+
       e.preventDefault()
       e.stopPropagation()
-      
-      // Cancel any ongoing momentum
+
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
         animationFrameRef.current = null
       }
       velocityRef.current = 0
-      
-      const delta = e.deltaY * 0.7
+
       currentScroll += delta
       updateScroll(currentScroll)
     }
