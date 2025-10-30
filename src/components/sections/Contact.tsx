@@ -67,7 +67,7 @@ export default function Contact() {
                   </a>
                 </motion.div>
 
-                <motion.div variants={itemVariants} className="space-y-2">
+                {/* <motion.div variants={itemVariants} className="space-y-2">
                   <div className="flex items-center justify-center gap-3 text-neutral">
                     <Phone className="h-5 w-5" />
                     <h4 className="font-medium text-lg">Phone</h4>
@@ -75,7 +75,7 @@ export default function Contact() {
                   <a href="tel:+306942491993" className="text-neutral-light text-base hover:text-primary transition-colors duration-300">
                     +30 6942491993
                   </a>
-                </motion.div>
+                </motion.div> */}
 
                 <motion.div variants={itemVariants} className="space-y-2">
                   <div className="flex items-center justify-center gap-3 text-neutral">
