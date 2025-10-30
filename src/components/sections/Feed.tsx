@@ -94,7 +94,7 @@ export function Feed() {
       }
     }
 
-    const handleWheelEvent = (e: WheelEvent) => {
+    const handleWheelEvent = (e: WheelEvent) => { 
       if (maxScroll <= 0) return
 
       const delta = e.deltaY * 0.7
