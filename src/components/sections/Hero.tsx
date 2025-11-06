@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, type MouseEvent } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
 const HERO_VIDEO_SRC = '/images-used/hero-background-v1.mp4';
-const HERO_FALLBACK_IMAGE = '/media/hero-video-fallback.png';
+const HERO_FALLBACK_IMAGE = '/images-used/hero-video-poster.jpg';
 const HERO_FALLBACK_IMAGE_MOBILE = '/images-used/DOMAINE HATZIMICHALIS/SUNSET XORA 6.JPG';
 
 export default function Hero() {
