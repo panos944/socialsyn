@@ -12,6 +12,7 @@ export default function Hero() {
   const [videoReady, setVideoReady] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const words = ['We', 'Synthesize', 'Presence.'];
   const ready = loaderDone; // Show content after loader is done
@@ -48,6 +49,7 @@ export default function Hero() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    setMounted(true);
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
@@ -70,27 +72,71 @@ export default function Hero() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (!mounted) return; // Wait for mount to prevent hydration issues
+    if (isMobile) return; // Only handle video on desktop
 
     const video = videoRef.current;
     if (!video) return;
 
+    // Set video attributes for autoplay
     video.defaultMuted = true;
     video.muted = true;
     video.playsInline = true;
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
+    video.setAttribute('autoplay', '');
 
-    const attemptPlayback = () => {
-      const result = video.play();
-      if (result && typeof result.then === 'function') {
-        result.catch(() => {
-          // Autoplay blocked; wait for a gesture
-        });
+    const attemptPlayback = async () => {
+      try {
+        // Ensure video is loaded before attempting to play
+        if (video.readyState >= 2) {
+          await video.play();
+        } else {
+          // Wait for video to be ready
+          video.addEventListener('canplay', async () => {
+            try {
+              await video.play();
+            } catch (e) {
+              // Autoplay blocked
+            }
+          }, { once: true });
+        }
+      } catch (e) {
+        // Autoplay blocked; will play on user interaction
       }
     };
 
+    // Try to play immediately
     attemptPlayback();
 
+    // Also try when video metadata is loaded
+    const handleLoadedMetadata = () => {
+      attemptPlayback();
+    };
+
+    // Also try when video can play
+    const handleCanPlay = async () => {
+      try {
+        await video.play();
+      } catch (e) {
+        // Autoplay blocked
+      }
+    };
+
+    // Try when video can play through without buffering
+    const handleCanPlayThrough = async () => {
+      try {
+        await video.play();
+      } catch (e) {
+        // Autoplay blocked
+      }
+    };
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+    video.addEventListener('canplay', handleCanPlay);
+    video.addEventListener('canplaythrough', handleCanPlayThrough);
+
+    // Fallback: unlock on user gesture
     const unlockOnGesture = () => {
       attemptPlayback();
     };
@@ -99,10 +145,13 @@ export default function Hero() {
     window.addEventListener('click', unlockOnGesture, { passive: true, once: true });
 
     return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      video.removeEventListener('canplay', handleCanPlay);
+      video.removeEventListener('canplaythrough', handleCanPlayThrough);
       window.removeEventListener('touchstart', unlockOnGesture);
       window.removeEventListener('click', unlockOnGesture);
     };
-  }, []);
+  }, [isMobile, mounted]);
 
   return (
     <section id="home" className="video-container">
@@ -114,55 +163,66 @@ export default function Hero() {
         style={{ y }}
       >
         <div className="absolute inset-0 w-full h-full">
+          {/* Mobile fallback image */}
           <div
-            className="absolute inset-0 w-full h-full bg-center bg-cover z-[2]"
+            className="absolute inset-0 w-full h-full bg-center bg-cover z-[2] md:hidden"
             style={{
-              backgroundImage: `url('${isMobile ? HERO_FALLBACK_IMAGE_MOBILE : HERO_FALLBACK_IMAGE}')`,
-              opacity: isMobile ? 1 : videoReady && !videoFailed ? 0 : 1,
+              backgroundImage: `url('${HERO_FALLBACK_IMAGE_MOBILE}')`,
               transition: 'opacity 900ms ease-in-out 120ms',
               pointerEvents: 'none',
               willChange: 'opacity',
             }}
           ></div>
-          {!isMobile && (
-            <video
-              ref={videoRef}
-              className="hero-video"
-              playsInline
-              muted
-              loop
-              autoPlay
-              preload="auto"
-              poster={HERO_FALLBACK_IMAGE}
-              src={HERO_VIDEO_SRC}
-              onLoadedData={() => {
-                setVideoReady(true);
-                setVideoFailed(false);
-                const video = videoRef.current;
-                if (video) {
-                  const playPromise = video.play();
-                  if (playPromise && typeof playPromise.then === 'function') {
-                    playPromise.catch(() => {});
-                  }
+          {/* Desktop fallback image */}
+          <div
+            className="hidden md:block absolute inset-0 w-full h-full bg-center bg-cover z-[2]"
+            style={{
+              backgroundImage: `url('${HERO_FALLBACK_IMAGE}')`,
+              opacity: videoReady && !videoFailed ? 0 : 1,
+              transition: 'opacity 900ms ease-in-out 120ms',
+              pointerEvents: 'none',
+              willChange: 'opacity',
+            }}
+          ></div>
+          {/* Desktop video */}
+          <video
+            ref={videoRef}
+            className="hidden md:block hero-video absolute pointer-events-none z-[3]"
+            style={{
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 'auto',
+              height: 'auto',
+              minWidth: '100%',
+              minHeight: '100%',
+              objectFit: 'cover',
+              opacity: mounted && videoReady && !videoFailed ? 1 : 0,
+              transition: 'opacity 0.6s ease-in-out',
+            }}
+            playsInline
+            muted
+            loop
+            autoPlay
+            preload="auto"
+            poster={HERO_FALLBACK_IMAGE}
+            src={HERO_VIDEO_SRC}
+            onLoadedData={async () => {
+              setVideoReady(true);
+              setVideoFailed(false);
+              const video = videoRef.current;
+              if (video) {
+                try {
+                  // Ensure video is muted for autoplay
+                  video.muted = true;
+                  await video.play();
+                } catch (e) {
+                  // Autoplay blocked - will play on user interaction
                 }
-              }}
-              onError={() => setVideoFailed(true)}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: 'auto',
-                height: 'auto',
-                minWidth: '100%',
-                minHeight: '100%',
-                objectFit: 'cover',
-                pointerEvents: 'none',
-                opacity: videoReady && !videoFailed ? 1 : 0,
-                transition: 'opacity 0.6s ease-in-out',
-              }}
-            />
-          )}
+              }
+            }}
+            onError={() => setVideoFailed(true)}
+          />
         </div>
       </motion.div>
       

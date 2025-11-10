@@ -16,21 +16,21 @@ export default function Footer() {
         <div className="border-b border-white/30 pb-16 mb-12">
           <div className="grid grid-cols-1 md:grid-cols-9 gap-10 md:gap-20">
             {/* Company Info */}
-            <div className="md:col-span-4 mb-8 md:mb-0">
-              <div className="mb-6">
+            <div className="md:col-span-4 mb-8 md:mb-0 text-center md:text-left">
+              <div className="mb-6 flex justify-center md:justify-start">
                 <Image
                   src="/images-used/Socialsyn_Logo-05.png"
                   alt="Socialsyn logo"
                   width={300}
                   height={96}
-                  className="h-12 w-auto md:h-12"
-                  style={{ transform: 'scale(2.5)', transformOrigin: 'left center', filter: 'brightness(0) invert(1)' }}
+                  className="h-12 w-auto md:h-12 [transform:scale(2.5)] [transform-origin:center_center] md:[transform-origin:left_center]"
+                  style={{ filter: 'brightness(0) invert(1)' }}
                 />
               </div>
               <p className="mb-6 opacity-95 text-sm md:text-lg tracking-[0.018em] leading-relaxed text-white/95">
                 Strategic digital marketing solutions that elevate your brand and drive measurable results for your business.
               </p>
-              <div className="flex space-x-6">
+              <div className="flex justify-center md:justify-start space-x-6">
                 {socialLinks.map((link) => (
                   <a
                     key={link.id}
@@ -45,7 +45,7 @@ export default function Footer() {
             </div>
 
             {/* Contact Info */}
-            <div className="md:col-span-3 mb-8 md:mb-0">
+            <div className="md:col-span-3 mb-8 md:mb-0 text-center md:text-left">
               <h5 className="text-[0.85rem] uppercase tracking-[0.42em] mb-6 text-white">
                 <span className="inline-block border-b border-white/70 pb-2">Contact</span>
               </h5>
@@ -57,19 +57,16 @@ export default function Footer() {
             </div>
 
             {/* Links */}
-            <div className="md:col-span-2 mb-8 md:mb-0">
+            <div className="md:col-span-2 mb-8 md:mb-0 text-center md:text-left">
               <h5 className="text-[0.85rem] uppercase tracking-[0.42em] mb-6 text-white">
                 <span className="inline-block border-b border-white/70 pb-2">Services</span>
               </h5>
               <ul className="space-y-3 text-sm md:text-lg tracking-[0.012em] text-white/95">
                 {serviceLinks.map((link) => (
                   <li key={link.id}>
-                    <a
-                      href={link.url}
-                      className="hover:text-white transition-colors duration-300"
-                    >
+                    <span>
                       {link.name}
-                    </a>
+                    </span>
                   </li>
                 ))}
               </ul>
