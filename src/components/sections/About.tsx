@@ -2,7 +2,10 @@
 
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { stats, teamImages } from '@/lib/constants';
+import { stats } from '@/lib/constants';
+
+// Neutral light placeholder for smooth loading (looks like shadow box)
+const blurDataURL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PC9zdmc+";
 
 export default function About() {
   const scrollToContact = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -104,14 +107,15 @@ export default function About() {
             variants={containerVariants}
           >
             <div className="relative">
-              <motion.div variants={itemVariants} className="relative z-10"
->
+              <motion.div variants={itemVariants} className="relative z-10">
                 <Image 
                   src={"/images-used/LEDOM/image00023.jpeg"} 
                   alt="About Us"
                   width={900}
                   height={900}
-                  className="w-full h-auto aspect-[3/4] object-cover" 
+                  className="w-full h-auto aspect-[3/4] object-cover"
+                  placeholder="blur"
+                  blurDataURL={blurDataURL}
                 />
               </motion.div>
               <div className="absolute -top-6 -right-6 w-28 h-28 bg-accent z-0"></div>

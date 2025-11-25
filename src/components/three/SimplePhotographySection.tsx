@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -30,23 +30,49 @@ const photos: PhotoItem[] = [
 export function SimplePhotographySection() {
   const [displayIndex, setDisplayIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
 
-  const queueTransition = (targetIndex: number) => {
+  const queueTransition = useCallback((targetIndex: number) => {
     if (isTransitioning || targetIndex === displayIndex) return
     setIsTransitioning(true)
     setDisplayIndex(targetIndex)
     window.setTimeout(() => setIsTransitioning(false), 420)
-  }
+  }, [isTransitioning, displayIndex])
 
-  const nextPhoto = () => {
+  const nextPhoto = useCallback(() => {
     const next = (displayIndex + 1) % photos.length
     queueTransition(next)
-  }
+  }, [displayIndex, queueTransition])
 
-  const prevPhoto = () => {
+  const prevPhoto = useCallback(() => {
     const prev = (displayIndex - 1 + photos.length) % photos.length
     queueTransition(prev)
-  }
+  }, [displayIndex, queueTransition])
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle if this section is in view
+      const section = sectionRef.current
+      if (!section) return
+      
+      const rect = section.getBoundingClientRect()
+      const isInView = rect.top < window.innerHeight && rect.bottom > 0
+      
+      if (!isInView) return
+      
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        prevPhoto()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        nextPhoto()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [nextPhoto, prevPhoto])
 
   const currentPhoto = photos[displayIndex]
   const isCurrentEmpty = currentPhoto?.empty
@@ -55,8 +81,10 @@ export function SimplePhotographySection() {
 
   return (
     <section
+      ref={sectionRef}
       id="portfolio"
       className="photography-section min-h-screen bg-gradient-to-b from-black via-gray-900 to-black py-20"
+      tabIndex={-1}
     >
       <div className="container mx-auto px-4">
         {/* Section Header */}
@@ -133,6 +161,8 @@ export function SimplePhotographySection() {
                     sizes="(max-width: 1000px) 100vw, (max-width: 1500px) 80vw, 70vw"
                     priority={displayIndex === 0}
                     quality={90}
+                    placeholder="blur"
+                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTFhIi8+PC9zdmc+"
                   />
                 )}
               </motion.div>
@@ -202,6 +232,8 @@ export function SimplePhotographySection() {
                     className="object-cover"
                     sizes="96px"
                     quality={70}
+                    placeholder="blur"
+                    blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTYiIGhlaWdodD0iOTYiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iIzFhMWExYSIvPjwvc3ZnPg=="
                   />
                 )}
               </button>

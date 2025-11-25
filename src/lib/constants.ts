@@ -182,22 +182,12 @@ export const socialLinks = [
   {
     id: 1,
     icon: "facebook-f",
-    url: "#",
+    url: "https://www.facebook.com/socialsyn",
   },
   {
     id: 2,
-    icon: "twitter",
-    url: "#",
-  },
-  {
-    id: 3,
     icon: "instagram",
-    url: "#",
-  },
-  {
-    id: 4,
-    icon: "linkedin-in",
-    url: "#",
+    url: "https://www.instagram.com/socialsyn_/",
   },
 ];
 

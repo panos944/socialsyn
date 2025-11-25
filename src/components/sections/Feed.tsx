@@ -1,7 +1,10 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import Image, { type ImageLoader } from 'next/image'
+
+// Neutral dark placeholder for smooth loading (looks like shadow box)
+const blurDataURL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMWExYTFhIi8+PC9zdmc+"
 
 // Feed images - using local feed exports
 const feedImages = [
@@ -63,6 +66,7 @@ export function Feed() {
   const [maxScroll, setMaxScroll] = useState(0)
   const [currentFeedIndex, setCurrentFeedIndex] = useState(0)
   const [isTransitioning, setIsTransitioning] = useState(false)
+  const sectionRef = useRef<HTMLElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const touchStartYRef = useRef<number | null>(null)
@@ -263,7 +267,7 @@ export function Feed() {
 
 
 
-  const nextFeed = () => {
+  const nextFeed = useCallback(() => {
     if (!isTransitioning) {
       setIsTransitioning(true)
       setScrollPosition(0)
@@ -276,9 +280,9 @@ export function Feed() {
         setIsTransitioning(false)
       }, 300)
     }
-  }
+  }, [isTransitioning])
 
-  const prevFeed = () => {
+  const prevFeed = useCallback(() => {
     if (!isTransitioning) {
       setIsTransitioning(true)
       setScrollPosition(0)
@@ -291,7 +295,32 @@ export function Feed() {
         setIsTransitioning(false)
       }, 300)
     }
-  }
+  }, [isTransitioning])
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle if this section is in view
+      const section = sectionRef.current
+      if (!section) return
+      
+      const rect = section.getBoundingClientRect()
+      const isInView = rect.top < window.innerHeight && rect.bottom > 0
+      
+      if (!isInView) return
+      
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        prevFeed()
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        nextFeed()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [nextFeed, prevFeed])
 
   const currentFeed = feedImages[currentFeedIndex]
   const prevFeedIndex = (currentFeedIndex - 1 + feedImages.length) % feedImages.length
@@ -300,7 +329,7 @@ export function Feed() {
   const nextFeedImage = feedImages[nextFeedIndex]
 
   return (
-    <section className="feed-section min-h-screen bg-gradient-to-b from-black via-gray-900 to-black py-20">
+    <section ref={sectionRef} className="feed-section min-h-screen bg-gradient-to-b from-black via-gray-900 to-black py-20" tabIndex={-1}>
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <div className="text-center mb-16">
@@ -349,6 +378,8 @@ export function Feed() {
                 loading="lazy"
                 loader={createFeedLoader(prevFeedImage.optimizedBase)}
                 sizes={buildSizes}
+                placeholder="blur"
+                blurDataURL={blurDataURL}
               />
             </div>
           </div>
@@ -368,6 +399,8 @@ export function Feed() {
                 loading="lazy"
                 loader={createFeedLoader(nextFeedImage.optimizedBase)}
                 sizes={buildSizes}
+                placeholder="blur"
+                blurDataURL={blurDataURL}
               />
             </div>
           </div>
@@ -457,6 +490,8 @@ export function Feed() {
                 sizes={buildSizes}
                 style={{ objectFit: 'cover', objectPosition: 'center top' }}
                 ref={imageRef}
+                placeholder="blur"
+                blurDataURL={blurDataURL}
               />
             </div>
             

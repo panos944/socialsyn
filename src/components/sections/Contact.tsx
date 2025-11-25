@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { socialLinks } from '@/lib/constants';
-import { Instagram, Facebook, Mail, Phone, MapPin } from 'lucide-react';
+import { Instagram, Facebook, Mail, MapPin } from 'lucide-react';
 
 export default function Contact() {
 

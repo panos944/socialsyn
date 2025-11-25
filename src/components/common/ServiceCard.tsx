@@ -3,6 +3,9 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
+// Neutral light placeholder for smooth loading (looks like shadow box)
+const blurDataURL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjBmMGYwIi8+PC9zdmc+";
+
 interface ServiceCardProps {
   service: {
     id: number;
@@ -28,6 +31,8 @@ export default function ServiceCard({ service }: ServiceCardProps) {
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             quality={90}
+            placeholder="blur"
+            blurDataURL={blurDataURL}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
