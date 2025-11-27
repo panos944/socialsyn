@@ -5,13 +5,11 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 
 const HERO_VIDEO_SRC = '/images-used/hero-background-v1.mp4';
 const HERO_FALLBACK_IMAGE = '/images-used/hero-video-poster.jpg';
-const HERO_FALLBACK_IMAGE_MOBILE = '/images-used/DOMAINE HATZIMICHALIS/SUNSET XORA 6.JPG';
 
 export default function Hero() {
   const [loaderDone, setLoaderDone] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
   const [mounted, setMounted] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const words = ['We', 'Synthesize', 'Presence.'];
@@ -50,41 +48,31 @@ export default function Hero() {
     if (typeof window === 'undefined') return;
 
     setMounted(true);
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
-
-    const preloadDesktop = new Image();
-    preloadDesktop.src = HERO_FALLBACK_IMAGE;
-
-    const preloadMobile = new Image();
-    preloadMobile.src = HERO_FALLBACK_IMAGE_MOBILE;
+    // Preload fallback image
+    const preloadFallback = new Image();
+    preloadFallback.src = HERO_FALLBACK_IMAGE;
 
     return () => {
-      window.removeEventListener('resize', handleResize);
-      preloadDesktop.src = '';
-      preloadMobile.src = '';
+      preloadFallback.src = '';
     };
   }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (!mounted) return; // Wait for mount to prevent hydration issues
-    if (isMobile) return; // Only handle video on desktop
 
     const video = videoRef.current;
     if (!video) return;
 
-    // Set video attributes for autoplay
+    // Set video attributes for autoplay (especially important for mobile)
     video.defaultMuted = true;
     video.muted = true;
     video.playsInline = true;
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
     video.setAttribute('autoplay', '');
+    video.setAttribute('webkit-playsinline', '');
 
     const attemptPlayback = async () => {
       try {
@@ -136,7 +124,7 @@ export default function Hero() {
     video.addEventListener('canplay', handleCanPlay);
     video.addEventListener('canplaythrough', handleCanPlayThrough);
 
-    // Fallback: unlock on user gesture
+    // Fallback: unlock on user gesture (especially important for iOS)
     const unlockOnGesture = () => {
       attemptPlayback();
     };
@@ -151,7 +139,7 @@ export default function Hero() {
       window.removeEventListener('touchstart', unlockOnGesture);
       window.removeEventListener('click', unlockOnGesture);
     };
-  }, [isMobile, mounted]);
+  }, [mounted]);
 
   return (
     <section id="home" className="video-container">
@@ -163,19 +151,9 @@ export default function Hero() {
         style={{ y }}
       >
         <div className="absolute inset-0 w-full h-full">
-          {/* Mobile fallback image */}
+          {/* Fallback image (shows while video loads or if video fails) */}
           <div
-            className="absolute inset-0 w-full h-full bg-center bg-cover z-[2] md:hidden"
-            style={{
-              backgroundImage: `url('${HERO_FALLBACK_IMAGE_MOBILE}')`,
-              transition: 'opacity 900ms ease-in-out 120ms',
-              pointerEvents: 'none',
-              willChange: 'opacity',
-            }}
-          ></div>
-          {/* Desktop fallback image */}
-          <div
-            className="hidden md:block absolute inset-0 w-full h-full bg-center bg-cover z-[2]"
+            className="absolute inset-0 w-full h-full bg-center bg-cover z-[2]"
             style={{
               backgroundImage: `url('${HERO_FALLBACK_IMAGE}')`,
               opacity: videoReady && !videoFailed ? 0 : 1,
@@ -184,10 +162,10 @@ export default function Hero() {
               willChange: 'opacity',
             }}
           ></div>
-          {/* Desktop video */}
+          {/* Hero video (plays on all devices) */}
           <video
             ref={videoRef}
-            className="hidden md:block hero-video absolute pointer-events-none z-[3]"
+            className="hero-video absolute pointer-events-none z-[3]"
             style={{
               top: '50%',
               left: '50%',
